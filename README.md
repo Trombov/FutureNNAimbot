@@ -4,7 +4,7 @@ Universal neural network aimbot for all games with custom training mode
 This cheat on machine learning, which recognizes objects in a certain range, then leads to an object and makes a shot. He does not interfere in any way with the memory of the game, he simply takes screenshots and recognizes objects.
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
-[B]Okay, let's get down to the detailed description:[/B]
+Okay, let's get down to the detailed description:
 Menu:
 1. Button Insert for enable training mode or disable
 2. Arrows for change size of the blue box (training mode)
@@ -24,9 +24,9 @@ Requirements:
 
 If you have something missing, the program will tell you about it.
 
-Video on how to training: [URL="https://youtu.be/B2G-3stYPPI"]Click[/URL]
+Video on how to training: https://youtu.be/B2G-3stYPPI
 
-Video demonstration of a "good" trained neural network: [URL="https://youtu.be/2DCMulOaMVg"]Click[/URL]
+Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
 
-[B]If there are any problems or suggestions, please write me about it.
-Also pull request at github is welcome![/B]
+If there are any problems or suggestions, please write me about it.
+Also pull request at github is welcome!
