@@ -34,7 +34,7 @@ The lower the AVG, the better the detection of objects.
 
 You should get weights from Early Stopping Point:
 
-
+https://camo.githubusercontent.com/51af5be5cfa94b6d741c90d10a163b168bf9170e/68747470733a2f2f6873746f2e6f72672f66696c65732f3564632f3761652f3766612f35646337616537666164396434653365623361343834633538626663316666352e706e67
 
 
 If there are any problems or suggestions, please write me about it.
