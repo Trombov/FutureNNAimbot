@@ -53,7 +53,7 @@ If there are any problems or suggestions, please write me about it.
 
 **Also pull request at github is welcome!**
 
-**TODO:
-**1. Smooth aim**
-**2. Advanced RCS settings**
-**3. Config testing for better recognizion**
+**TODO:**
+1. Smooth aim
+2. Advanced RCS settings
+3. Config testing for better recognizion
