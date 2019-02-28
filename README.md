@@ -28,6 +28,25 @@ Requirements:
 
 If you have something missing, the program will tell you about it.
 
+How to train NN
+---
+When you start the game for the first time, you will be immediately asked to start training. You can not refuse :)
+
+During a workout, you must select an object using special buttons, take screenshots of objects in the frame, and after the procedure done, click on the **END** button.
+
+The training process for neural network begins. You can quietly close the game for best performance.
+
+After you are tired of waiting or you have reached the peak on the chart (description below), then press CTRL + C and confirm the action by writing Y and pressing enter in the window form(with a lot of text).
+
+After that, you definitely need to open the game again. Then the game is started, write to the console "done".
+
+How to train NN if you already trained it
+---
+Press Insert button and u will come in training mode. If u press Insert again u will leave training mode.
+
+After this, repeat the steps as shown above.
+
+
 **Video on how to training:** https://youtu.be/B2G-3stYPPI
 
 **Video demonstration of a "good" trained neural network:** https://youtu.be/2DCMulOaMVg
