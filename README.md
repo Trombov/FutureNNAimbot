@@ -26,9 +26,9 @@ Requirements:
 
 If you have something missing, the program will tell you about it.
 
-**Video on how to training: https://youtu.be/B2G-3stYPPI
+**Video on how to training: https://youtu.be/B2G-3stYPPI **
 
-**Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
+**Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg **
 
 
 
