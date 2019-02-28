@@ -39,3 +39,9 @@ https://camo.githubusercontent.com/51af5be5cfa94b6d741c90d10a163b168bf9170e/6874
 
 If there are any problems or suggestions, please write me about it.
 Also pull request at github is welcome!
+
+TODO:
+1. Empty object on screenshots for better detection
+2. Smooth aim
+3. Advanced RCS settings
+4. Config testing for better recognizion
