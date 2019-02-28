@@ -55,6 +55,10 @@ If there are any problems or suggestions, please write me about it.
 
 **Also pull request at github is welcome!**
 
+
+Change log:
+1. Added funtion "Empty object on screenshots for better detection" check README.md to how to use it
+
 **TODO:**
 1. Smooth aim
 2. Advanced RCS settings
