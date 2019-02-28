@@ -29,27 +29,28 @@ Video on how to training: https://youtu.be/B2G-3stYPPI
 
 Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
 
-!!!!!!Take screenshots of objects that should not be recognized by pressing BACKSPACE button!!!!!!
+h1 Important information
+---
+**Take screenshots of objects that should not be recognized by pressing BACKSPACE button**
 
-!!!!!!Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)!!!!!!!
+**Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)**
 
-!!!!!!New width and height must be divisible by 32!!!!!!
+**New width and height must be divisible by 32**
 
-If u want make point for enemys on the picture then just run yolo_mark.bat file(change it first for correct values)
+**If u want make point for enemys on the picture then just run yolo_mark.bat file(change it first for correct values)**
 
-The lower the AVG, the better the detection of objects.
+**The lower the AVG, the better the detection of objects.**
 
-!!!!!!You should get weights from Early Stopping Point:!!!!!!!
+**You should get weights from Early Stopping Point:**
 
-Then it's on Early Stopping Point then press Ctrl+C to stop and make more pictures for train!
-https://camo.githubusercontent.com/51af5be5cfa94b6d741c90d10a163b168bf9170e/68747470733a2f2f6873746f2e6f72672f66696c65732f3564632f3761652f3766612f35646337616537666164396434653365623361343834633538626663316666352e706e67
-
+**Then it's on Early Stopping Point then press Ctrl+C to stop and make more pictures for train!**
+![screenshot of sample](https://camo.githubusercontent.com/51af5be5cfa94b6d741c90d10a163b168bf9170e/68747470733a2f2f6873746f2e6f72672f66696c65732f3564632f3761652f3766612f35646337616537666164396434653365623361343834633538626663316666352e706e67)
 
 If there are any problems or suggestions, please write me about it.
 
-Also pull request at github is welcome!
+**Also pull request at github is welcome!**
 
-TODO:
-1. Smooth aim
-2. Advanced RCS settings
-3. Config testing for better recognizion
+**TODO:
+**1. Smooth aim**
+**2. Advanced RCS settings**
+**3. Config testing for better recognizion**
