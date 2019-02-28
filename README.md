@@ -5,6 +5,7 @@ This cheat on machine learning, which recognizes objects in a certain range, the
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
 Okay, let's get down to the detailed description:
+
 Menu:
 1. Button Insert for enable training mode or disable
 2. Arrows for change size of the blue box (training mode)
@@ -31,7 +32,9 @@ Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulO
 !!!!!!Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)!!!!!!!
 
 !!!!!!New width and height must be divisible by 32!!!!!!
+
 If u want make point for enemys on the picture then just run yolo_mark.bat file(change it first for correct values)
+
 The lower the AVG, the better the detection of objects.
 
 You should get weights from Early Stopping Point:
@@ -40,6 +43,7 @@ https://camo.githubusercontent.com/51af5be5cfa94b6d741c90d10a163b168bf9170e/6874
 
 
 If there are any problems or suggestions, please write me about it.
+
 Also pull request at github is welcome!
 
 TODO:
