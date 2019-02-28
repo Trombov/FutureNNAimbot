@@ -284,6 +284,14 @@ namespace FutureNNAimbot
                         i++;
                         Console.Beep();
                     }
+                    if (User32.GetAsyncKeyState(Keys.Back) == -32767)
+                    {
+                        bitmap.Save($"darknet/data/img/{game}{i.ToString()}.png", System.Drawing.Imaging.ImageFormat.Png);
+                        File.WriteAllText($"darknet/data/img/{game}{i.ToString()}.txt", "");
+                        File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
+                        i++;
+                        Console.Beep();
+                    }
                     if (User32.GetAsyncKeyState(Keys.End) == -32767)
                     {
                         Console.WriteLine("Okey, we have pictures for training. Let's train Neural Network....");

@@ -71,6 +71,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Trained files for games\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Alturos.Yolo.2.4.1\build\net461\Alturos.Yolo.targets" Condition="Exists('..\packages\Alturos.Yolo.2.4.1\build\net461\Alturos.Yolo.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
