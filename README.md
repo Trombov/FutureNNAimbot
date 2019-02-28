@@ -5,7 +5,7 @@ This cheat on machine learning, which recognizes objects in a certain range, the
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
 Okay, let's get down to the detailed description:
-
+---
 Menu:
 1. Button Insert for enable training mode or disable
 2. Arrows for change size of the blue box (training mode)
@@ -17,19 +17,22 @@ Default settings:
 1. RButton for shoot (u can change it)
 2. Insert for enter in training mode (u can change it)
 
-In the config.json file, you can change the range resolution for object recognition, enable or disable SimpleRCS, specify which game we will use and specify the buttons for attack and training.
+**In the config.json file, you can change the range resolution for object recognition, enable or disable SimpleRCS, specify which game we will use and specify the buttons for attack and training.
 
 Requirements:
+---
 1. Install the latest Nvidia driver for your graphic device
 2. Install Nvidia CUDA Toolkit 10.0 (must be installed add a hardware driver for cuda support)
 
 If you have something missing, the program will tell you about it.
 
-Video on how to training: https://youtu.be/B2G-3stYPPI
+**Video on how to training: https://youtu.be/B2G-3stYPPI
 
-Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
+**Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
 
-h1 Important information
+
+
+Important information
 ---
 **Take screenshots of objects that should not be recognized by pressing BACKSPACE button**
 
