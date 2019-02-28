@@ -32,7 +32,7 @@ How to train NN
 ---
 When you start the game for the first time, you will be immediately asked to start training. You can not refuse :)
 
-During a workout, you must select an object using special buttons, take screenshots of objects in the frame, and after the procedure done, click on the **END** button.
+During a workout, you must select an object using special buttons(PageUP and PageDOWN), take screenshots of objects in the frame, and after the procedure done, click on the **END** button.
 
 The training process for neural network begins. You can quietly close the game for best performance.
 
