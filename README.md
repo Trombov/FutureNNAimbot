@@ -17,7 +17,7 @@ Default settings:
 1. RButton for shoot (u can change it)
 2. Insert for enter in training mode (u can change it)
 
-**In the config.json file, you can change the range resolution for object recognition, enable or disable SimpleRCS, specify which game we will use and specify the buttons for attack and training.
+**In the config.json file, you can change the range resolution for object recognition, enable or disable SimpleRCS, specify which game we will use and specify the buttons for attack and training.**
 
 Requirements:
 ---
