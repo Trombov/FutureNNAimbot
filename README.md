@@ -29,6 +29,8 @@ Video on how to training: https://youtu.be/B2G-3stYPPI
 
 Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
 
+!!!!!!Take screenshots of objects that should not be recognized by pressing BACKSPACE button!!!!!!
+
 !!!!!!Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)!!!!!!!
 
 !!!!!!New width and height must be divisible by 32!!!!!!
@@ -48,7 +50,6 @@ If there are any problems or suggestions, please write me about it.
 Also pull request at github is welcome!
 
 TODO:
-1. Empty object on screenshots for better detection
-2. Smooth aim
-3. Advanced RCS settings
-4. Config testing for better recognizion
+1. Smooth aim
+2. Advanced RCS settings
+3. Config testing for better recognizion
