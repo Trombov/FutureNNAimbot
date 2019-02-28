@@ -29,6 +29,7 @@ Video on how to training: https://youtu.be/B2G-3stYPPI
 Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulOaMVg
 
 !!!!!!Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)!!!!!!!
+
 !!!!!!New width and height must be divisible by 32!!!!!!
 If u want make point for enemys on the picture then just run yolo_mark.bat file(change it first for correct values)
 The lower the AVG, the better the detection of objects.
