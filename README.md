@@ -11,7 +11,7 @@ Okay, let's get down to the detailed description:
 Menu:
 1. Button Insert for enable training mode or disable
 2. Arrows for change size of the blue box (training mode)
-3. Button PageUp and PageDown for shoot object for shoot or train
+3. Button PageUp and PageDown for change object for shoot or train
 4. Button Home for make picture of object (training mode) (you will hear the sound of Beep)
 5. Button End for exit training mode and start train neural network for detect objects
 
