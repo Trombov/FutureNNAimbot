@@ -32,5 +32,10 @@ Video demonstration of a "good" trained neural network: https://youtu.be/2DCMulO
 If u want make point for enemys on the picture then just run yolo_mark.bat file(change it first for correct values)
 The lower the AVG, the better the detection of objects.
 
+You should get weights from Early Stopping Point:
+
+
+
+
 If there are any problems or suggestions, please write me about it.
 Also pull request at github is welcome!
