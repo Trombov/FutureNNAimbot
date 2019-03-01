@@ -33,13 +33,14 @@ How to train NN
 ---
 When you start the game for the first time, you will be immediately asked to start training. You can not refuse :)
 
-During a workout, you must select an object using special buttons(PageUP and PageDOWN), take screenshots of objects in the frame, and after the procedure done, click on the **END** button.
+During a workout, you must select an object using special buttons(PageUP and PageDOWN), take screenshots of objects in the frame by pressing **HOME**(files should be created at darknet/data/img/), and after the procedure done, click on the **END** button.
 
 The training process for neural network begins. You can quietly close the game for best performance.
 
 After you are tired of waiting or you have reached the peak on the chart (description below), then press CTRL + C and confirm the action by writing Y and pressing enter in the window form(with a lot of text).
 
 After that, you definitely need to open the game again. Then the game is started, write to the console "done".
+Files should be copied into the trainfiles folder(automatically, but if it not then chekc files in the darknet(folder and subfolders) like a GAME.names(data folder) GAME.cfg(darknet folder) GAME_last.weights(backup folder, file shood be renamed to GAME.weights for program starts)
 
 How to train NN if you already trained it
 ---
