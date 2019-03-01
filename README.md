@@ -84,5 +84,6 @@ Change log:
 
 **TODO:**
 1. Smooth aim
-2. Advanced RCS settings
-3. Config testing for better recognizion
+2. Train again mode correcting
+3. Advanced RCS settings
+4. Config testing for better recognizion
