@@ -1,6 +1,8 @@
 # FutureNNAimbot
 Universal neural network aimbot for all games with custom training mode
 
+## NVIDIA ONLY
+
 This cheat on machine learning, which recognizes objects in a certain range, then leads to an object and makes a shot. He does not interfere in any way with the memory of the game, he simply takes screenshots and recognizes objects.
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
