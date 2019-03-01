@@ -7,6 +7,7 @@ This cheat on machine learning, which recognizes objects in a certain range, the
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
 **Upload trained files of games in the "Trained files for games" folder via pull requests!**
+
 **Or if u can't then write me in telegram: CowDrow or Discord: ZxCL#1220!**
 
 
