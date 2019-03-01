@@ -87,6 +87,7 @@ Change log:
 
 **TODO:**
 1. Smooth aim
+2. Better aiming on two enemys on the frame
 2. Train again mode correcting
 3. Advanced RCS settings
 4. Config testing for better recognizion
