@@ -63,7 +63,7 @@ Press Insert button and u will come in training mode. If u press Insert again u 
 After this, repeat the steps as shown above.
 
 
-**New vide on how to training step by step:** https://youtu.be/NhTlDnXeLC8
+**New video on how to train step by step:** https://youtu.be/NhTlDnXeLC8
 
 **Video on how to training:** https://youtu.be/B2G-3stYPPI
 
