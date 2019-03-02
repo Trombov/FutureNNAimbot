@@ -96,7 +96,7 @@ If there are any problems or suggestions, please write me about it.
 ---
 1.Unable to load DLL 'x64\yolo_cpp_dll_gpu.dll'
 
-**Solution**: Unistall CUDA 10.1 and make sure that you install CUDA 10.0
+**Solution**: Uninstall CUDA 10.1 and make sure that you install CUDA 10.0
 
 
 
