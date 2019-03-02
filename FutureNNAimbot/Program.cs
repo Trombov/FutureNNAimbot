@@ -30,8 +30,14 @@ namespace FutureNNAimbot
         public Keys ShootKey { get; set; }
         [DataMember]
         public Keys TrainModeKey { get; set; }
+        [DataMember]
+        public float SmoothAim { get; set; }
+        [DataMember]
+        public bool Information { get; set; }
+        [DataMember]
+        public bool Head { get; set; }
 
-        public Settings(int SizeX, int SizeY,string Game,bool SimpleRCS, Keys ShootKey, Keys TrainModeKey)
+        public Settings(int SizeX, int SizeY,string Game,bool SimpleRCS, Keys ShootKey, Keys TrainModeKey,float SmoothAim,bool Information,bool Head)
         {
             this.SizeX = SizeX;
             this.SizeY = SizeY;
@@ -39,6 +45,9 @@ namespace FutureNNAimbot
             this.SimpleRCS = SimpleRCS;
             this.ShootKey = ShootKey;
             this.TrainModeKey = TrainModeKey;
+            this.SmoothAim = SmoothAim;
+            this.Information = Information;
+            this.Head = Head;
 
         }
     }
@@ -106,27 +115,32 @@ namespace FutureNNAimbot
             // Read settings
             DataContractJsonSerializer Settings = new DataContractJsonSerializer(typeof(Settings[]));
             Settings[] settings = null;
-            //Settings settings = new Settings(320, 320, "csgo", true ,Keys.RButton,Keys.Insert);
+            //Settings settingsSave = new Settings(320, 320, "csgo", true, Keys.RButton, Keys.Insert,(float)0.1,true,true);
             //using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate))
             //{
-            //    Settings.WriteObject(fs, new Settings[1] { settings });
+            //    Settings.WriteObject(fs, new Settings[1] { settingsSave });
             //}
             using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate))
             {
                 settings = (Settings[])Settings.ReadObject(fs);
             }
+
+            //Vars
             size.X = settings[0].SizeX;
             size.Y = settings[0].SizeY;
             string game = settings[0].Game;
             bool SimpleRCS = settings[0].SimpleRCS;
             Keys ShootKey = settings[0].ShootKey;
             Keys TrainModeKey = settings[0].TrainModeKey;
+            float SmoothAim = settings[0].SmoothAim;
+            bool Information = settings[0].Information;
+            bool Head = settings[0].Head;
 
+            
 
-            //Vars
             int i = 0;
             int selectedObject = 0;
-            double shoots = 0;
+            int shoots = 0;
             string[] objects = null;
             System.Drawing.Point coordinates;
             OverlayWindow _window;
@@ -231,23 +245,7 @@ namespace FutureNNAimbot
                     }
                 }
 
-                if (User32.GetAsyncKeyState(Keys.Left) == -32767)
-                {
-                    trainBox.Width -= 1;
-                }
-                if (User32.GetAsyncKeyState(Keys.Down) == -32767)
-                {
-                    trainBox.Height += 1;
-                }
-
-                if (User32.GetAsyncKeyState(Keys.Right) == -32767)
-                {
-                    trainBox.Width += 1;
-                }
-                if (User32.GetAsyncKeyState(Keys.Up) == -32767)
-                {
-                    trainBox.Height -= 1;
-                }
+                
                 _window.X = coordinates.X - size.X / 2;
                 _window.Y = coordinates.Y - size.Y / 2;
                 gfx.BeginScene();
@@ -259,6 +257,23 @@ namespace FutureNNAimbot
 
                 if (trainingMode)
                 {
+                    if (User32.GetAsyncKeyState(Keys.Left) != 0)
+                    {
+                        trainBox.Width -= 1;
+                    }
+                    if (User32.GetAsyncKeyState(Keys.Down) != 0)
+                    {
+                        trainBox.Height += 1;
+                    }
+
+                    if (User32.GetAsyncKeyState(Keys.Right) != 0)
+                    {
+                        trainBox.Width += 1;
+                    }
+                    if (User32.GetAsyncKeyState(Keys.Up) != 0)
+                    {
+                        trainBox.Height -= 1;
+                    }
 
                     float relative_center_x = (float)(trainBox.X + trainBox.Width / 2) / size.X;
                     float relative_center_y = (float)(trainBox.Y + trainBox.Height / 2) / size.Y;
@@ -266,6 +281,7 @@ namespace FutureNNAimbot
                     float relative_height = (float)trainBox.Height / size.Y;
                     gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 14), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(0, 0), "Training mode. Object " + objects[selectedObject]);
                     gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), GameOverlay.Drawing.Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
+                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
                     if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
                     {
@@ -300,9 +316,10 @@ namespace FutureNNAimbot
                         File.WriteAllText($"darknet/{game}.cmd", File.ReadAllText($"darknet/{game}.cmd").Replace("GAME", game));
                         File.WriteAllText($"darknet/{game}_trainmore.cmd", File.ReadAllText($"darknet/{game}_trainmore.cmd").Replace("GAME", game));
                         File.WriteAllText($"darknet/data/{game}.names", string.Join("\n", objects));
-                        if(File.Exists($"trainfiles/{game}.weights"))
+                        Process.GetProcessesByName(game)[0].Kill();
+                        if (File.Exists($"trainfiles/{game}.weights"))
                         {
-                            File.Copy($"trainfiles/{game}.weights", $"darknet/{game}.weights");
+                            File.Copy($"trainfiles/{game}.weights", $"darknet/{game}.weights",true);
                             Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {game}_trainmore.cmd");
                         }
                         else Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {game}.cmd");
@@ -317,6 +334,7 @@ namespace FutureNNAimbot
                                 File.Copy($"darknet/data/backup/{game}_last.weights", $"trainfiles/{game}.weights",true);
                                 File.Copy($"darknet/data/{game}.names", $"trainfiles/{game}.names", true);
                                 File.Copy($"darknet/{game}.cfg", $"trainfiles/{game}.cfg", true);
+                                File.WriteAllText($"trainfiles/{game}.cfg", File.ReadAllText($"trainfiles/{game}.cfg").Replace("batch=64", "batch=1").Replace("subdivisions=8", "subdivisions=1"));
                                 yoloWrapper = new YoloWrapper($"trainfiles/{game}.cfg", $"trainfiles/{game}.weights", $"trainfiles/{game}.names");
                                 trainingMode = false;
                                 break;
@@ -334,11 +352,28 @@ namespace FutureNNAimbot
                     {
                         selectedObject = selectedObject + 1 == objects.Count() ? 0 : selectedObject + 1;
                     }
+                    if (User32.GetAsyncKeyState(Keys.Up) == -32767)
+                    {
+                        SmoothAim = SmoothAim >= 1 ? SmoothAim : SmoothAim + 0.05f;
+                    }
+                    if (User32.GetAsyncKeyState(Keys.Down) == -32767)
+                    {
+                        SmoothAim = SmoothAim <= 0 ? SmoothAim : SmoothAim - 0.05f;
+                    }
+                    if (User32.GetAsyncKeyState(Keys.Delete) == -32767)
+                    {
+                        Head = Head == true ? false : true;
+                    }
+                    if (User32.GetAsyncKeyState(Keys.Home) == -32767)
+                    {
+                        shoots = 0;
+                        SimpleRCS = SimpleRCS == true ? false : true;
+                    }
                     if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
                     {
                         selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
                     }
-                    gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 14), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(0, 0), "Object " + objects[selectedObject]);
+                    gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), $"Object {objects[selectedObject]}; SmoothAim {Math.Round(SmoothAim, 2)}; Head {Head}; SimpleRCS {SimpleRCS}" );
 
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -354,23 +389,107 @@ namespace FutureNNAimbot
                             {
                                 if (item.Confidence > (double)0.4)
                                 {
+                                    GameOverlay.Drawing.Rectangle head = GameOverlay.Drawing.Rectangle.Create(item.X + Convert.ToInt32(item.Width / 2.9), item.Y, Convert.ToInt32(item.Width / 3), item.Height / 7);
+                                    GameOverlay.Drawing.Rectangle body = GameOverlay.Drawing.Rectangle.Create(item.X + Convert.ToInt32(item.Width / 6), item.Y + item.Height / 6, Convert.ToInt32(item.Width / 1.5f), item.Height / 3);
 
-                                    gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {item.Confidence.ToString()}");
+                                    if (Information)
+                                    {
+                                     if(Head)   gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {DistanceBetweenCross(head.Left + head.Width / 2, head.Top + head.Height / 2)}");
+                                     else gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {DistanceBetweenCross(body.Left + body.Width / 2, body.Top + body.Height / 2)}");
+
+                                    }
                                     if (item.Type == objects[selectedObject])
                                     {
                                         gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
-                                        gfx.DrawCrosshair(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), item.X + item.Width / 2, item.Y + item.Height / 7 + Convert.ToInt32(1 * shoots), 2, 2, CrosshairStyle.Cross);
+                                        if (Head)
+                                        {
+                                         
+                                            gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), head, 2);
+                                            gfx.DrawCrosshair(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), head.Left + head.Width/2, head.Top + head.Height/2 + Convert.ToInt32(1 * shoots), 2, 2, CrosshairStyle.Cross);
+                                            gfx.DrawLine(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), size.X / 2, size.Y / 2, head.Left + head.Width / 2, head.Top + head.Height / 2 + Convert.ToInt32(1 * shoots), 2);
+                                            
+                                        }
+                                        else
+                                        {
+                                            gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), body, 2);
+                                            gfx.DrawCrosshair(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), body.Left + body.Width / 2, body.Top + body.Height / 2 + Convert.ToInt32(1 * shoots), 2, 2, CrosshairStyle.Cross);
+                                            gfx.DrawLine(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), size.X / 2, size.Y / 2, body.Left + body.Width / 2, body.Top + body.Height / 2 + Convert.ToInt32(1 * shoots), 2);
+
+                                        }
 
                                         if (User32.GetAsyncKeyState(ShootKey) != 0)
                                         {
-                                            Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => x.Width * x.Height).First();
-                                            if ((nearestEnemy.X - size.X / 2) + (nearestEnemy.Width / 2) < 320 && nearestEnemy.Y - size.Y / 2 + item.Height / 7 + 1 * shoots < 320)
+
+
+                                           
+                                            if (Head)
                                             {
-                                                User32.mouse_event(0x01, Convert.ToInt32((nearestEnemy.X - size.X / 2) + (nearestEnemy.Width / 2)), Convert.ToInt32(nearestEnemy.Y - size.Y / 2 + item.Height / 7 + 1 * shoots), 0, (UIntPtr)0);
-                                                User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
-                                                User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
-                                                if (SimpleRCS) shoots += 1;
+                                                Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2)).Last();
+
+                                                GameOverlay.Drawing.Rectangle nearestEnemyHead = GameOverlay.Drawing.Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shoots);
+
+                                                if (SmoothAim <= 0)
+                                                {
+                                                    User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyHead.Left - size.X / 2) + (nearestEnemyHead.Width / 2))), Convert.ToInt32((nearestEnemyHead.Top - size.Y / 2 + nearestEnemyHead.Height / 7 + 1 * shoots) ), 0, (UIntPtr)0);
+                                                    User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                    User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                }
+                                                else
+                                                {
+
+                                                    if (size.X / 2 < nearestEnemyHead.Left | size.X / 2 > nearestEnemyHead.Right
+                                                        | size.Y / 2 < nearestEnemyHead.Top  | size.Y / 2 > nearestEnemyHead.Bottom )
+                                                    {
+                                                        User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyHead.Left - size.X / 2) + (nearestEnemyHead.Width / 2)) * SmoothAim), Convert.ToInt32((nearestEnemyHead.Top - size.Y / 2 + nearestEnemyHead.Height / 7 + 1 * shoots) * SmoothAim), 0, (UIntPtr)0);
+                                                    }
+                                                    else
+                                                    {
+                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (SimpleRCS) shoots += 2;
+                                                    }
+                                                }
+
+
+                                               
                                             }
+                                            else
+                                            {
+                                                
+                                                Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).Last(); 
+                                                
+                                                GameOverlay.Drawing.Rectangle nearestEnemyBody = GameOverlay.Drawing.Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2*shoots, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shoots);
+                                                if (SmoothAim <= 0)
+                                                {
+                                                    User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyBody.Left - size.X / 2) + (nearestEnemyBody.Width / 2)) ), Convert.ToInt32((nearestEnemyBody.Top - size.Y / 2 + nearestEnemyBody.Height / 7 + 1 * shoots) ), 0, (UIntPtr)0);
+                                                    User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                    User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                }
+                                                else
+                                                {
+
+                                                    if (size.X / 2 < nearestEnemyBody.Left | size.X / 2 > nearestEnemyBody.Right
+                                                        | size.Y / 2 < nearestEnemyBody.Top | size.Y / 2 > nearestEnemyBody.Bottom)
+                                                        {
+                                                            User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyBody.Left - size.X / 2) + (nearestEnemyBody.Width / 2)) * SmoothAim), Convert.ToInt32((nearestEnemyBody.Top - size.Y / 2 + nearestEnemyBody.Height / 7 + 1 * shoots) * SmoothAim), 0, (UIntPtr)0);
+                                                        }
+                                                        else
+                                                        {
+                                                            User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                            User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                            if (SimpleRCS) shoots += 2;
+                                                        }
+                                                    
+                                                      
+                                                    
+                                                }
+
+
+                                               
+                                            }
+                                                
+                                            
+                                            //System.Threading.Thread.Sleep(120);
                                         }
                                     }
                                     else
@@ -415,6 +534,18 @@ namespace FutureNNAimbot
             GDI32.DeleteObject(hBitmap);
             return img;
         }
+
+
+       static float DistanceBetweenCross(float X, float Y)
+        {
+            float ydist = (Y - size.Y/2);
+            float xdist = (X - size.X/2);
+            float Hypotenuse = (float)Math.Sqrt(Math.Pow(ydist, 2) + Math.Pow(xdist, 2));
+            return Hypotenuse;
+        }
+
+
+
         public static void PrepareFiles(string game)
         {
             
