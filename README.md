@@ -30,7 +30,7 @@ Default settings:
 Requirements:
 ---
 1. Install the latest Nvidia driver for your graphic device
-2. Install Nvidia CUDA Toolkit 10.0 (must be installed add a hardware driver for cuda support)
+2. Install Nvidia CUDA Toolkit 10.0(**!!!NOT 10.1!!!**) (must be installed add a hardware driver for cuda support)
 
 If you have something missing, the program will tell you about it.
 
@@ -80,6 +80,15 @@ Important information
 If there are any problems or suggestions, please write me about it.
 
 **Also pull request at github is welcome!**
+
+
+
+**FAMOUS ISSUES:**
+1.Unable to load DLL 'x64\yolo_cpp_dll_gpu.dll'
+Solution: Unistall CUDA 10.1 and make sure that you install CUDA 10.0
+
+
+
 
 
 Change log:
