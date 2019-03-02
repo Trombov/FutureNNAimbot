@@ -107,7 +107,7 @@ Change log:
 Version 0.6-alpha:
 
 1. Added funtion "Empty object on screenshots for better detection" check README.md to how to use it
-2. Smooth aim
+2. Added Smooth aim
 3. Better aiming on two enemys on the frame
 4. Train again mode correcting
 
