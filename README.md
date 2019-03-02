@@ -13,16 +13,23 @@ Of course, this is not the final version, in the future we will have to wait for
 
 Okay, let's get down to the detailed description:
 ---
-Menu:
+Menu in training mode:
 1. Button Insert for enable training mode or disable
 2. Arrows for change size of the blue box (training mode)
-3. Button PageUp and PageDown for change object for shoot or train
+3. Button PageUp and PageDown for change object for  train
 4. Button Home for make picture of object (training mode) (you will hear the sound of Beep)
 5. Button End for exit training mode and start train neural network for detect objects
-6. Button BACKSPACE for taking screenshots of objects that should not be recognized
+6. Button BACKSPACE for taking screenshots of objects that should not be recognized. **Take screenshots of objects that should not be recognized by pressing BACKSPACE button**.
+
+Menu in playing mode:
+1. Button Insert for enable training mode or disable
+2. Arrows for change SmoothAim value
+3. Button PageUp and PageDown for change object for shoot
+4. Button Home for enable or disable SimpleRCS
+5. Button Delete for change aim to Head or Body
 
 Default settings:
-1. RButton for shoot (u can change it)
+1. MouseWheel for shoot (u can change it)
 2. Insert for enter in training mode (u can change it)
 
 **In the config.json file, you can change the range resolution for object recognition, enable or disable SimpleRCS, specify which game we will use and specify the buttons for attack and training.**
@@ -94,11 +101,12 @@ If there are any problems or suggestions, please write me about it.
 
 
 Change log:
+Version 0.6-alpha:
 1. Added funtion "Empty object on screenshots for better detection" check README.md to how to use it
+2. Smooth aim
+3. Better aiming on two enemys on the frame
+4. Train again mode correcting
 
 **TODO:**
-1. Smooth aim
-2. Better aiming on two enemys on the frame
-2. Train again mode correcting
-3. Advanced RCS settings
-4. Config testing for better recognizion
+1. Advanced RCS settings
+2. Config testing for better recognizion
