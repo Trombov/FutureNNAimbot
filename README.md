@@ -73,6 +73,8 @@ After this, repeat the steps as shown above.
 
 Important information
 ---
+**Train with different distances, lights and angles for better recognition.**
+
 **Take screenshots of objects that should not be recognized by pressing BACKSPACE button**
 
 **Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)**
