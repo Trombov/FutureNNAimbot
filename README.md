@@ -63,6 +63,8 @@ Press Insert button and u will come in training mode. If u press Insert again u 
 After this, repeat the steps as shown above.
 
 
+**New vide on how to training step by step:**https://youtu.be/NhTlDnXeLC8
+
 **Video on how to training:** https://youtu.be/B2G-3stYPPI
 
 **Video demonstration of a "good" trained neural network:** https://youtu.be/2DCMulOaMVg
