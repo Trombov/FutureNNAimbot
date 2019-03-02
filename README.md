@@ -39,7 +39,7 @@ Default settings:
 Requirements:
 ---
 1. Install the latest Nvidia driver for your graphic device
-2. Install Nvidia CUDA Toolkit 10.0(**!!!NOT 10.1!!!**) (must be installed add a hardware driver for cuda support)
+2. Install [Nvidia CUDA Toolkit 10.0](https://developer.nvidia.com/cuda-downloads)(**!!!NOT 10.1!!!**) (must be installed add a hardware driver for cuda support)
 
 If you have something missing, the program will tell you about it.
 
