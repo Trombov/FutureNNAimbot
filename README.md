@@ -49,7 +49,7 @@ When you start the game for the first time, you will be immediately asked to sta
 
 During a workout, you must select an object using special buttons(PageUP and PageDOWN), take screenshots of objects in the frame by pressing **HOME**(files should be created at darknet/data/img/), and after the procedure done, click on the **END** button.
 
-The training process for neural network begins. You can quietly close the game for best performance.
+The training process for neural network begins.
 
 After you are tired of waiting or you have reached the peak on the chart (description below), then press CTRL + C and confirm the action by writing Y and pressing enter in the window form(with a lot of text).
 
