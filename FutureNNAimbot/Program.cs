@@ -124,7 +124,7 @@ namespace FutureNNAimbot
             {
                 settings = (Settings[])Settings.ReadObject(fs);
             }
-
+           
             //Vars
             size.X = settings[0].SizeX;
             size.Y = settings[0].SizeY;
@@ -136,7 +136,7 @@ namespace FutureNNAimbot
             bool Information = settings[0].Information;
             bool Head = settings[0].Head;
 
-            
+          
 
             int i = 0;
             int selectedObject = 0;
@@ -192,8 +192,8 @@ namespace FutureNNAimbot
 
 
             PrepareFiles(game);
-
-
+            Random random = new Random();
+          
             //Make transparent window for drawing
             _window = new OverlayWindow(0, 0, size.X, size.Y)
             {
@@ -257,6 +257,7 @@ namespace FutureNNAimbot
 
                 if (trainingMode)
                 {
+                    int rand = random.Next(5000, 999999);
                     if (User32.GetAsyncKeyState(Keys.Left) != 0)
                     {
                         trainBox.Width -= 1;
@@ -294,17 +295,18 @@ namespace FutureNNAimbot
 
                     if (User32.GetAsyncKeyState(Keys.Home) == -32767)
                     {
-                        bitmap.Save($"darknet/data/img/{game}{i.ToString()}.png", System.Drawing.Imaging.ImageFormat.Png);
-                        File.WriteAllText($"darknet/data/img/{game}{i.ToString()}.txt", string.Format("{0} {1} {2} {3} {4}", selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
-                        File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
+                        
+                        bitmap.Save($"darknet/data/img/{game}{i.ToString()}{rand}.png", System.Drawing.Imaging.ImageFormat.Png);
+                        File.WriteAllText($"darknet/data/img/{game}{i.ToString()}{rand}.txt", string.Format("{0} {1} {2} {3} {4}", selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
+                       // File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
                         i++;
                         Console.Beep();
                     }
                     if (User32.GetAsyncKeyState(Keys.Back) == -32767)
                     {
-                        bitmap.Save($"darknet/data/img/{game}{i.ToString()}.png", System.Drawing.Imaging.ImageFormat.Png);
-                        File.WriteAllText($"darknet/data/img/{game}{i.ToString()}.txt", "");
-                        File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
+                        bitmap.Save($"darknet/data/img/{game}{i.ToString()}{rand}.png", System.Drawing.Imaging.ImageFormat.Png);
+                        File.WriteAllText($"darknet/data/img/{game}{i.ToString()}{rand}.txt", "");
+                       // File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
                         i++;
                         Console.Beep();
                     }
@@ -316,6 +318,16 @@ namespace FutureNNAimbot
                         File.WriteAllText($"darknet/{game}.cmd", File.ReadAllText($"darknet/{game}.cmd").Replace("GAME", game));
                         File.WriteAllText($"darknet/{game}_trainmore.cmd", File.ReadAllText($"darknet/{game}_trainmore.cmd").Replace("GAME", game));
                         File.WriteAllText($"darknet/data/{game}.names", string.Join("\n", objects));
+                       // DirectoryInfo d = ;//Assuming Test is your Folder
+                        FileInfo[] Files = new DirectoryInfo(Application.StartupPath + @"\darknet\data\img").GetFiles($"{game}*.png"); //Getting Text files
+                        string PathOfImg = "";
+                        foreach (FileInfo file in Files)
+                        {
+                            PathOfImg += $"data/img/{file.Name}\r\n";
+                        }
+
+                        File.WriteAllText($"darknet/data/{game}.txt", PathOfImg);
+
                         Process.GetProcessesByName(game)[0].Kill();
                         if (File.Exists($"trainfiles/{game}.weights"))
                         {
