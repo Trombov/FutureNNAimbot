@@ -285,34 +285,34 @@ namespace FutureNNAimbot
                         {
                             continue;
                         }
-                        else trainBox.Width -= 10;
+                        else trainBox.Width -= 1;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Down) == -32767)
+                    if (User32.GetAsyncKeyState(Keys.Down) != 0)
                     {
                         if (trainBox.Height >= size.Y)
                         {
                             continue;
                         }
-                        else trainBox.Height += 10;
+                        else trainBox.Height += 1;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Right) == -32767)
+                    if (User32.GetAsyncKeyState(Keys.Right) != 0)
                     {
                         if (trainBox.Width >= size.X)
                         {
                             continue;
                         }
-                        else trainBox.Width += 10;
+                        else trainBox.Width += 1;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Up) == -32767)
+                    if (User32.GetAsyncKeyState(Keys.Up) != 0)
                     {
                         if (trainBox.Height <= 0)
                         {
                             continue;
                         }
-                        else trainBox.Height -= 10;
+                        else trainBox.Height -= 1;
                     }
 
                     float relative_center_x = (float)(trainBox.X + trainBox.Width / 2) / size.X;
