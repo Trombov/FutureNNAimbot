@@ -10,7 +10,7 @@ Of course, this is not the final version, in the future we will have to wait for
 
 **Upload trained files of games in the "Trained files for games" folder via pull requests!**
 
-**If you can't upload, then write to me in Telegram: CowDrow, or Discord: ZxCL#1220!**
+**If you cannot upload the files, then write to me in Telegram: CowDrow, or Discord: ZxCL#1220!**
 
 ## Requirements:
 * Install the latest Nvidia driver for your graphics card
