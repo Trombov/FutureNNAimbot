@@ -63,8 +63,6 @@ After this, repeat the steps as shown in the **Training the NN** section.
 
 **New video on how to train step by step:** https://youtu.be/NhTlDnXeLC8
 
-**Video on how to train:** https://youtu.be/B2G-3stYPPI
-
 **Video demonstration of a "good" trained neural network:** https://youtu.be/2DCMulOaMVg
 
 #### Important information:
