@@ -378,7 +378,7 @@ namespace FutureNNAimbot
                         }
                         else Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {game}.cmd");
 
-                        Console.WriteLine("When you finished training, write \"done\" in this console.");
+                        Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
 
                         while (true)
                         {
@@ -394,7 +394,7 @@ namespace FutureNNAimbot
                                 break;
 
                             }
-                            else Console.WriteLine("When you finished training, write \"done\" in this console.");
+                            else Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
                         }
                         Console.WriteLine("Okay! Training has finished. Let's check detection in the game!");
                     }
