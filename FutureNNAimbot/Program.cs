@@ -351,7 +351,7 @@ namespace FutureNNAimbot
 
                     if (User32.GetAsyncKeyState(Keys.End) == -32767)
                     {
-                        Console.WriteLine("Okay, we have pictures for training. Let's train Neural Network....");
+                        Console.WriteLine("Okay, we have the pictures for training. Let's train the Neural Network....");
                         File.WriteAllText($"darknet/{game}.cfg", File.ReadAllText($"darknet/{game}.cfg").Replace("NUMBER", objects.Count().ToString()).Replace("FILTERNUM", ((objects.Count() + 5) * 3).ToString()));
                         File.WriteAllText($"darknet/data/{game}.data", File.ReadAllText($"darknet/data/{game}.data").Replace("NUMBER", objects.Count().ToString()).Replace("GAME", game));
                         File.WriteAllText($"darknet/{game}.cmd", File.ReadAllText($"darknet/{game}.cmd").Replace("GAME", game));
