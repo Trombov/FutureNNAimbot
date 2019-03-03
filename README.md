@@ -6,6 +6,8 @@ Universal neural network aimbot for all games with custom training mode
 This cheat on machine learning, which recognizes objects in a certain range, then leads to an object and makes a shot. He does not interfere in any way with the memory of the game, he simply takes screenshots and recognizes objects.
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
+**To launch sources download release version and copy file to DEBUG folder!**
+
 **Upload trained files of games in the "Trained files for games" folder via pull requests!**
 
 **Or if u can't then write me in telegram: CowDrow or Discord: ZxCL#1220!**
@@ -13,16 +15,23 @@ Of course, this is not the final version, in the future we will have to wait for
 
 Okay, let's get down to the detailed description:
 ---
-Menu:
+Menu in training mode:
 1. Button Insert for enable training mode or disable
 2. Arrows for change size of the blue box (training mode)
-3. Button PageUp and PageDown for change object for shoot or train
+3. Button PageUp and PageDown for change object for  train
 4. Button Home for make picture of object (training mode) (you will hear the sound of Beep)
 5. Button End for exit training mode and start train neural network for detect objects
-6. Button BACKSPACE for taking screenshots of objects that should not be recognized
+6. Button BACKSPACE for taking screenshots of objects that should not be recognized. **Take screenshots of objects that should not be recognized by pressing BACKSPACE button**.
+
+Menu in playing mode:
+1. Button Insert for enable training mode or disable
+2. Arrows for change SmoothAim value
+3. Button PageUp and PageDown for change object for shoot
+4. Button Home for enable or disable SimpleRCS
+5. Button Delete for change aim to Head or Body
 
 Default settings:
-1. RButton for shoot (u can change it)
+1. MouseWheel for shoot (u can change it)
 2. Insert for enter in training mode (u can change it)
 
 **In the config.json file, you can change the range resolution for object recognition, enable or disable SimpleRCS, specify which game we will use and specify the buttons for attack and training.**
@@ -30,7 +39,7 @@ Default settings:
 Requirements:
 ---
 1. Install the latest Nvidia driver for your graphic device
-2. Install Nvidia CUDA Toolkit 10.0(**!!!NOT 10.1!!!**) (must be installed add a hardware driver for cuda support)
+2. Install [Nvidia CUDA Toolkit 10.0](https://developer.nvidia.com/cuda-toolkit-archive)(**!!!NOT 10.1!!!**) (must be installed add a hardware driver for cuda support)
 
 If you have something missing, the program will tell you about it.
 
@@ -40,7 +49,7 @@ When you start the game for the first time, you will be immediately asked to sta
 
 During a workout, you must select an object using special buttons(PageUP and PageDOWN), take screenshots of objects in the frame by pressing **HOME**(files should be created at darknet/data/img/), and after the procedure done, click on the **END** button.
 
-The training process for neural network begins. You can quietly close the game for best performance.
+The training process for neural network begins.
 
 After you are tired of waiting or you have reached the peak on the chart (description below), then press CTRL + C and confirm the action by writing Y and pressing enter in the window form(with a lot of text).
 
@@ -54,6 +63,8 @@ Press Insert button and u will come in training mode. If u press Insert again u 
 After this, repeat the steps as shown above.
 
 
+**New video on how to train step by step:** https://youtu.be/NhTlDnXeLC8
+
 **Video on how to training:** https://youtu.be/B2G-3stYPPI
 
 **Video demonstration of a "good" trained neural network:** https://youtu.be/2DCMulOaMVg
@@ -62,6 +73,8 @@ After this, repeat the steps as shown above.
 
 Important information
 ---
+**Train with different distances, lights and angles for better recognition.**
+
 **Take screenshots of objects that should not be recognized by pressing BACKSPACE button**
 
 **Then u finished training write in cfg file batch=1 and subdivision=1 for testing(recognizing)**
@@ -87,18 +100,21 @@ If there are any problems or suggestions, please write me about it.
 ---
 1.Unable to load DLL 'x64\yolo_cpp_dll_gpu.dll'
 
-**Solution**: Unistall CUDA 10.1 and make sure that you install CUDA 10.0
+**Solution**: Uninstall CUDA 10.1 and make sure that you install CUDA 10.0
 
 
 
 
 
 Change log:
+
+Version 0.6-alpha:
+
 1. Added funtion "Empty object on screenshots for better detection" check README.md to how to use it
+2. Added Smooth aim
+3. Better aiming on two enemys on the frame
+4. Train again mode correcting
 
 **TODO:**
-1. Smooth aim
-2. Better aiming on two enemys on the frame
-2. Train again mode correcting
-3. Advanced RCS settings
-4. Config testing for better recognizion
+1. Advanced RCS settings
+2. Config testing for better recognizion
