@@ -90,7 +90,7 @@ If there are any problems or suggestions, please write me about it.
 
 **Also, pull requesting this github is welcome!**
 
-### FAMOUS ISSUES:
+FAMOUS ISSUES:
 ---
 1.Unable to load DLL 'x64\yolo_cpp_dll_gpu.dll'
 
