@@ -1,4 +1,4 @@
-﻿using Alturos.Yolo;
+using Alturos.Yolo;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -136,7 +136,7 @@ namespace FutureNNAimbot
                 }
                 else settings = (Settings[])Settings.ReadObject(fs);
             }
-           
+
             //Vars
             size.X = settings[0].SizeX;
             size.Y = settings[0].SizeY;
@@ -205,7 +205,7 @@ namespace FutureNNAimbot
 
             PrepareFiles(game);
             Random random = new Random();
-          
+
             //Make transparent window for drawing
             _window = new OverlayWindow(0, 0, size.X, size.Y)
             {
@@ -252,7 +252,6 @@ namespace FutureNNAimbot
                 {
                     if (yoloWrapper != null)
                     {
-
                         objects = File.ReadAllLines($"trainfiles/{game}.names");
                         trainingMode = trainingMode == true ? false : true;
                     }
@@ -277,8 +276,7 @@ namespace FutureNNAimbot
                 if (trainingMode)
                 {
                     int rand = random.Next(5000, 999999);
-                    File.WriteAllText($"trainfiles/{game}.cfg", File.ReadAllText($"trainfiles/{game}.cfg").Replace("batch=1", "batch=64").Replace("subdivisions=1", "subdivisions=8"));
-                    
+
                     if (User32.GetAsyncKeyState(Keys.Left) != 0)
                     {
                         if (trainBox.Width <= 0)
@@ -335,10 +333,9 @@ namespace FutureNNAimbot
 
                     if (User32.GetAsyncKeyState(ScreenshotKey) == -32767)
                     {
-                        
+
                         bitmap.Save($"darknet/data/img/{game}{i.ToString()}{rand}.png", System.Drawing.Imaging.ImageFormat.Png);
                         File.WriteAllText($"darknet/data/img/{game}{i.ToString()}{rand}.txt", string.Format("{0} {1} {2} {3} {4}", selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
-                       // File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
                         i++;
                         Console.Beep();
                     }
@@ -347,7 +344,6 @@ namespace FutureNNAimbot
                     {
                         bitmap.Save($"darknet/data/img/{game}{i.ToString()}{rand}.png", System.Drawing.Imaging.ImageFormat.Png);
                         File.WriteAllText($"darknet/data/img/{game}{i.ToString()}{rand}.txt", "");
-                       // File.WriteAllText($"darknet/data/{game}.txt", File.ReadAllText($"darknet/data/{game}.txt") + $"data/img/{game}{i.ToString()}.png\r\n");
                         i++;
                         Console.Beep();
                     }
@@ -356,11 +352,12 @@ namespace FutureNNAimbot
                     {
                         Console.WriteLine("Okay, we have the pictures for training. Let's train the Neural Network....");
                         File.WriteAllText($"darknet/{game}.cfg", File.ReadAllText($"darknet/{game}.cfg").Replace("NUMBER", objects.Count().ToString()).Replace("FILTERNUM", ((objects.Count() + 5) * 3).ToString()));
+                        File.WriteAllText($"darknet/{game}.cfg", File.ReadAllText($"darknet/{game}.cfg").Replace("batch=1", "batch=64").Replace("subdivisions=1", "subdivisions=8"));
                         File.WriteAllText($"darknet/data/{game}.data", File.ReadAllText($"darknet/data/{game}.data").Replace("NUMBER", objects.Count().ToString()).Replace("GAME", game));
                         File.WriteAllText($"darknet/{game}.cmd", File.ReadAllText($"darknet/{game}.cmd").Replace("GAME", game));
                         File.WriteAllText($"darknet/{game}_trainmore.cmd", File.ReadAllText($"darknet/{game}_trainmore.cmd").Replace("GAME", game));
                         File.WriteAllText($"darknet/data/{game}.names", string.Join("\n", objects));
-                       // DirectoryInfo d = ;//Assuming Test is your Folder
+                        // DirectoryInfo d = ;//Assuming Test is your Folder
                         FileInfo[] Files = new DirectoryInfo(Application.StartupPath + @"\darknet\data\img").GetFiles($"{game}*.png"); //Getting Text files
                         string PathOfImg = "";
                         foreach (FileInfo file in Files)
@@ -384,7 +381,6 @@ namespace FutureNNAimbot
                         {
                             if (Console.ReadLine() == "done")
                             {
-
                                 File.Copy($"darknet/data/backup/{game}_last.weights", $"trainfiles/{game}.weights", true);
                                 File.Copy($"darknet/data/{game}.names", $"trainfiles/{game}.names", true);
                                 File.Copy($"darknet/{game}.cfg", $"trainfiles/{game}.cfg", true);
@@ -401,7 +397,6 @@ namespace FutureNNAimbot
                 }
                 else
                 {
-                    File.WriteAllText($"trainfiles/{game}.cfg", File.ReadAllText($"trainfiles/{game}.cfg").Replace("batch=64", "batch=1").Replace("subdivisions=8", "subdivisions=1"));
                     if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
                     {
                         selectedObject = selectedObject + 1 == objects.Count() ? 0 : selectedObject + 1;
