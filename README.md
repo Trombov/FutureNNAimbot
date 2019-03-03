@@ -99,7 +99,7 @@ FAMOUS ISSUES:
 Change log:
 ---
 
-Version 0.7-alpha: Thanks to **[microsoftv]**(https://github.com/microsoftv)
+Version 0.7-alpha: Thanks to **[microsoftv](https://github.com/microsoftv)**
 
 1. Added ScreenshotKey to config
 2. Added ScreenshotModeKey to config (centered/following)
