@@ -53,7 +53,7 @@ The training process for the neural network begins.
 
 After you are tired of waiting or you have reached the peak on the chart (description below), then press CTRL + C and confirm the action by writing Y and pressing enter in the window form(with a lot of text).
 
-After that, you'll need to open the game again. When the game is started, write to the console `done`.
+After that, you will need to open the game again. When the game is started, write to the console `done`.
 Files should be copied into the trainfiles folder automatically (if not, then check in the darknet folder and subfolders; such as data or backup, for files like: GAME.names(data folder) GAME.cfg(darknet folder) GAME_last.weights(backup folder, file should be renamed to GAME.weights in order to start the program)
 
 #### Training a pre-trained NN:
