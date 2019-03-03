@@ -163,7 +163,7 @@ namespace FutureNNAimbot
             //Check compatibility
             if (Process.GetProcessesByName(game).Count() == 0)
             {
-                MessageBox.Show($"You haven't launched {game}...");
+                MessageBox.Show($"You have not launched {game}...");
                 Process.GetCurrentProcess().Kill();
             }
 
