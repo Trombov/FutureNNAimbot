@@ -383,7 +383,7 @@ namespace FutureNNAimbot
                             }
                             else Console.WriteLine("When you finished training, write \"done\" in this console.");
                         }
-                        Console.WriteLine("Okay! Training finished. Let's check detection in the game!");
+                        Console.WriteLine("Okay! Training has finished. Let's check detection in the game!");
                     }
                 }
                 else
