@@ -6,7 +6,7 @@ Universal neural network aimbot for all games with custom training mode
 This cheat uses machine learning, which recognizes objects in a certain range, then aims at the object and shoots. It does not interfere in any way with the memory of the game, it simply takes screenshots and recognizes objects.
 Of course, this is not the final version, in the future we will have to wait for improvements of a different type (amd video card support (if I have one for the test :)), smooth aim, AdvancedRCS for any games, improvements in object recognition, etc.).
 
-**Training dependencies must be downloaded from the release version and copied to the Debug folder!**
+**Training dependencies must be downloaded from the Release version and copied to the Debug folder!**
 
 **Upload trained files of games in the "Trained files for games" folder via pull requests!**
 
