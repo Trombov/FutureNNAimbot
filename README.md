@@ -70,7 +70,7 @@ After this, repeat the steps as shown in the **Training the NN** section.
 
 **Take screenshots of objects that should not be recognized by pressing Backspace**
 
-**When you finished training, write in cfg file: `batch=1` and `subdivision=1` for testing(recognizing)**
+**When you have finished training the NN, write in cfg file: `batch=1` and `subdivision=1` for testing(recognizing)**
 
 **New width and height must be divisible by 32**
 
