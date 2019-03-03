@@ -196,7 +196,7 @@ namespace FutureNNAimbot
             else
             {
                 trainingMode = true;
-                MessageBox.Show($"Looks like you have not configured settings for {game}... Let's train the Neural Network! :)\n Prepairing files for training....");
+                MessageBox.Show($"Looks like you have not configured settings for {game}... Let's train the Neural Network! :)\n Preparing files for training....");
 
                 Console.Write("How many objects will we be analyzing and training on? Write each object's name via separator ',' without space (EX: 1,2): ");
                 objects = Console.ReadLine().Split(',');
