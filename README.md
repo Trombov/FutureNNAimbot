@@ -99,6 +99,17 @@ FAMOUS ISSUES:
 Change log:
 ---
 
+Version 0.7-alpha: Thanks to @microsoftv
+
+1. Added ScreenshotKey to config
+2. Added ScreenshotModeKey to config (centered/following)
+3. Added an auto-config for when no config is found
+4. Fixed the english of many lines of text
+5. NN config is now auto-set to batch=1/64 and subdivisions=1/8 for when training or not.
+6. Added a check for changing the width/height of the trainbox so that it does not go beyond the parent box.
+8. Added ScreenshotMode to UI when training.
+9. Fixed spacing of many lines.
+
 Version 0.6-alpha:
 
 1. Added funtion "Empty object on screenshots for better detection" check README.md on how to use it
