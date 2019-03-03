@@ -119,5 +119,8 @@ Version 0.6-alpha:
 
 **TODO:**
 ---
-1. Advanced RCS settings
-2. Config testing for better recognizion
+1. Add universal screencapture
+2. Add movement for blue box
+3. Add movement for red box
+4. Advanced RCS settings
+5. Config testing for better recognizion
