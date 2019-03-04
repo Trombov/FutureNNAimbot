@@ -44,7 +44,8 @@ Of course, this is not the final version, in the future we will have to wait for
 
 **In the config.json file, you can change the resolution range for object recognition, enable/disable SimpleRCS, specify which game you will use, and specify the button to attack and enable/disable Training Mode.**
 
-#### Training the NN:
+Training the NN:
+---
 When you start the game for the first time, you will be asked to start training, this step is not optional (unless you already have a pre-trained NN for the game).
 
 During training, you must select the target object using PageUp and PageDown, take multiple screenshots of the target objects in the blue frame by pressing **HOME**(files should be created at darknet/data/img/), and once you're done, press the **END** button.
@@ -56,7 +57,8 @@ After you are tired of waiting or you have reached the peak on the chart (descri
 After that, you will need to open the game again. When the game is started, write to the console `done`.
 Files should be copied into the trainfiles folder automatically (if not, then check in the darknet folder and subfolders; such as data or backup, for files like: GAME.names(data folder) GAME.cfg(darknet folder) GAME_last.weights(backup folder, file should be renamed to GAME.weights in order to start the program)
 
-#### Training a pre-trained NN:
+Training a pre-trained NN:
+---
 Press Insert and you will enter training mode. If you press Insert again you will leave training mode.
 
 After this, repeat the steps as shown in the **Training the NN** section.
@@ -65,7 +67,8 @@ After this, repeat the steps as shown in the **Training the NN** section.
 
 **Video demonstration of a "good" trained neural network:** https://youtu.be/2DCMulOaMVg
 
-#### Important information:
+Important information:
+---
 **Train with different distances, lights, and angles for the best possible recognition.**
 
 **Take screenshots of objects that should not be recognized by pressing Backspace**
@@ -87,12 +90,25 @@ If there are any problems or suggestions, please write me about it.
 
 **Also, pull requesting this github is welcome!**
 
-### FAMOUS ISSUES:
+FAMOUS ISSUES:
+---
 1.Unable to load DLL 'x64\yolo_cpp_dll_gpu.dll'
 
 **Solution**: Uninstall CUDA 10.1 and make sure that you only installed CUDA 10.0
 
-#### Change log:
+Change log:
+---
+
+Version 0.7-alpha: Thanks to **[microsoftv](https://github.com/microsoftv)**
+
+1. Added ScreenshotKey to config
+2. Added ScreenshotModeKey to config (centered/following)
+3. Added an auto-config for when no config is found
+4. Fixed the english of many lines of text
+5. NN config is now auto-set to batch=1/64 and subdivisions=1/8 for when training or not.
+6. Added a check for changing the width/height of the trainbox so that it does not go beyond the parent box.
+8. Added ScreenshotMode to UI when training.
+9. Fixed spacing of many lines.
 
 Version 0.6-alpha:
 
@@ -102,5 +118,10 @@ Version 0.6-alpha:
 4. Train again mode correcting
 
 **TODO:**
-1. Advanced RCS settings
-2. Config testing for better recognizion
+---
+0. AlexNet
+1. Make screencapture better
+2. Add movement for blue box
+3. Add movement for red box
+4. Advanced RCS settings
+5. Config testing for better recognizion
