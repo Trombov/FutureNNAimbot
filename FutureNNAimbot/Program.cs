@@ -260,11 +260,7 @@ namespace FutureNNAimbot
 
                 if (User32.GetAsyncKeyState(ScreenshotModeKey) == -32767)
                 {
-                    if (yoloWrapper != null)
-                    {
-                        objects = File.ReadAllLines($"trainfiles/{game}.names");
-                        screenshotMode = screenshotMode == true ? false : true;
-                    }
+                    screenshotMode = screenshotMode == true ? false : true;
                 }
 
                 _window.X = coordinates.X - size.X / 2;
