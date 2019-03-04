@@ -119,7 +119,6 @@ Version 0.6-alpha:
 
 **TODO:**
 ---
-0. AlexNet
 1. Make screencapture better
 2. Add movement for blue box
 3. Add movement for red box
