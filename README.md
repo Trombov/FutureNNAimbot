@@ -119,8 +119,7 @@ Version 0.6-alpha:
 
 **TODO:**
 ---
-0. AlexNet
-1. Make screencapture better
+1. Fix problems with aiming on some games(Rainbow Six, etc)
 2. Add movement for blue box
 3. Add movement for red box
 4. Advanced RCS settings
