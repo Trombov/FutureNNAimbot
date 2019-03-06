@@ -309,11 +309,7 @@ namespace FutureNNAimbot
                         else trainBox.Height -= 1;
                     }
 
-                    float relative_center_x = (float)(trainBox.X + trainBox.Width / 2) / size.X;
-                    float relative_center_y = (float)(trainBox.Y + trainBox.Height / 2) / size.Y;
-                    float relative_width = (float)trainBox.Width / size.X;
-                    float relative_height = (float)trainBox.Height / size.Y;
-                    gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 14), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(0, 0), "Training mode. Object: " + objects[selectedObject] + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
+                    gfx.DrawText(_graphics.CreateFont("Arial", 14), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), "Training mode. Object: " + objects[selectedObject] + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
                     gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), GameOverlay.Drawing.Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
                     gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
@@ -329,7 +325,10 @@ namespace FutureNNAimbot
 
                     if (User32.GetAsyncKeyState(ScreenshotKey) == -32767)
                     {
-
+                        float relative_center_x = (float)(trainBox.X + trainBox.Width / 2) / size.X;
+                        float relative_center_y = (float)(trainBox.Y + trainBox.Height / 2) / size.Y;
+                        float relative_width = (float)trainBox.Width / size.X;
+                        float relative_height = (float)trainBox.Height / size.Y;
                         bitmap.Save($"darknet/data/img/{game}{i.ToString()}{rand}.png", System.Drawing.Imaging.ImageFormat.Png);
                         File.WriteAllText($"darknet/data/img/{game}{i.ToString()}{rand}.txt", string.Format("{0} {1} {2} {3} {4}", selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
                         i++;
@@ -480,8 +479,12 @@ namespace FutureNNAimbot
                                                 if (SmoothAim <= 0)
                                                 {
                                                     User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyHead.Left - size.X / 2) + (nearestEnemyHead.Width / 2))), Convert.ToInt32((nearestEnemyHead.Top - size.Y / 2 + nearestEnemyHead.Height / 7 + 1 * shooting)), 0, (UIntPtr)0);
-                                                    User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
-                                                    User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                    if (ShootKey != Keys.LButton)
+                                                    {
+                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (SimpleRCS) shooting += 2;
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -493,8 +496,11 @@ namespace FutureNNAimbot
                                                     }
                                                     else
                                                     {
-                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
-                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (ShootKey != Keys.LButton)
+                                                        {
+                                                            User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                            User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        }
                                                         if (SimpleRCS) shooting += 2;
                                                     }
                                                 }
@@ -508,8 +514,12 @@ namespace FutureNNAimbot
                                                 if (SmoothAim <= 0)
                                                 {
                                                     User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyBody.Left - size.X / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - size.Y / 2 + nearestEnemyBody.Height / 7 + 1 * shooting)), 0, (UIntPtr)0);
-                                                    User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
-                                                    User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                    if (ShootKey != Keys.LButton)
+                                                    {
+                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (SimpleRCS) shooting += 2;
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -521,8 +531,11 @@ namespace FutureNNAimbot
                                                     }
                                                     else
                                                     {
-                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
-                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (ShootKey != Keys.LButton)
+                                                        {
+                                                            User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                            User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        }
                                                         if (SimpleRCS) shooting += 2;
                                                     }
                                                 }
