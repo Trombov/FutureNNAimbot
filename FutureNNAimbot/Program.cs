@@ -131,6 +131,8 @@ namespace FutureNNAimbot
                 if (fs.Length == 0)
                 {
                     Settings.WriteObject(fs, new Settings[1] { auto_config });
+                    fs.Close();
+                    File.WriteAllText("config.json", File.ReadAllText("config.json").Replace(",", ",\n"));
                     MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                     return;
                 }
