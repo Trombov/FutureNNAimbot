@@ -27,7 +27,7 @@ namespace FutureNNAimbot
         [DataMember]
         public bool SimpleRCS { get; set; }
         [DataMember]
-        public Keys ShootKey { get; set; }
+        public Keys AimKey { get; set; }
         [DataMember]
         public Keys TrainModeKey { get; set; }
         [DataMember]
@@ -40,20 +40,23 @@ namespace FutureNNAimbot
         public bool Information { get; set; }
         [DataMember]
         public bool Head { get; set; }
+        [DataMember]
+        public bool AutoShoot { get; set; }
 
-        public Settings(int SizeX, int SizeY, string Game, bool SimpleRCS, Keys ShootKey, Keys TrainModeKey, Keys ScreenshotKey, Keys ScreenshotModeKey, float SmoothAim, bool Information, bool Head)
+        public Settings(int SizeX, int SizeY, string Game, bool SimpleRCS, Keys AimKey, Keys TrainModeKey, Keys ScreenshotKey, Keys ScreenshotModeKey, float SmoothAim, bool Information, bool Head, bool AutoShoot)
         {
             this.SizeX = SizeX;
             this.SizeY = SizeY;
             this.Game = Game;
             this.SimpleRCS = SimpleRCS;
-            this.ShootKey = ShootKey;
+            this.AimKey = AimKey;
             this.TrainModeKey = TrainModeKey;
             this.ScreenshotKey = ScreenshotKey;
             this.ScreenshotModeKey = ScreenshotModeKey;
             this.SmoothAim = SmoothAim;
             this.Information = Information;
             this.Head = Head;
+            this.AutoShoot = AutoShoot;
         }
     }
 
@@ -125,7 +128,7 @@ namespace FutureNNAimbot
             // Read settings
             DataContractJsonSerializer Settings = new DataContractJsonSerializer(typeof(Settings[]));
             Settings[] settings = null;
-            Settings auto_config = new Settings(320, 320, "game", true, Keys.MButton, Keys.Insert, Keys.Home, Keys.NumPad9, 0.1f, true, false);
+            Settings auto_config = new Settings(320, 320, "game", true, Keys.MButton, Keys.Insert, Keys.Home, Keys.NumPad9, 0.1f, true, false, true);
             using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate))
             {
                 if (fs.Length == 0)
@@ -138,17 +141,22 @@ namespace FutureNNAimbot
             }
 
             //Vars
+            
+
             size.X = settings[0].SizeX;
             size.Y = settings[0].SizeY;
             string game = settings[0].Game;
             bool SimpleRCS = settings[0].SimpleRCS;
-            Keys ShootKey = settings[0].ShootKey;
+            Keys AimKey = settings[0].AimKey;
             Keys TrainModeKey = settings[0].TrainModeKey;
             Keys ScreenshotKey = settings[0].ScreenshotKey;
             Keys ScreenshotModeKey = settings[0].ScreenshotModeKey;
             float SmoothAim = settings[0].SmoothAim;
             bool Information = settings[0].Information;
             bool Head = settings[0].Head;
+            bool AutoShoot = settings[0].AutoShoot;
+            
+
 
             int i = 0;
             int selectedObject = 0;
@@ -417,19 +425,27 @@ namespace FutureNNAimbot
                         shooting = 0;
                         SimpleRCS = SimpleRCS == true ? false : true;
                     }
-
+                    if (User32.GetAsyncKeyState(Keys.End) == -32767)
+                    {
+                        AutoShoot = AutoShoot == true ? false : true;
+                    }
                     if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
                     {
                         selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
                     }
-                    gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), $"Object {objects[selectedObject]}; SmoothAim {Math.Round(SmoothAim, 2)}; Head {Head}; SimpleRCS {SimpleRCS}");
+                    gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), 
+                        $"Object {objects[selectedObject]};" +
+                        $"SmoothAim {Math.Round(SmoothAim, 2)};" +
+                        $"Head {Head};" +
+                        $"SimpleRCS {SimpleRCS};" +
+                        $"AutoShoot {AutoShoot}");
 
                     using (MemoryStream ms = new MemoryStream())
                     {
                         bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                         IEnumerable<Alturos.Yolo.Model.YoloItem> items = yoloWrapper.Detect(ms.ToArray());
                         if (SimpleRCS)
-                            if (User32.GetAsyncKeyState(ShootKey) == 0) shooting = 0;
+                            if (User32.GetAsyncKeyState(AimKey) == 0) shooting = 0;
 
                         if (items.Count() > 0)
                         {
@@ -468,7 +484,7 @@ namespace FutureNNAimbot
 
                                         }
 
-                                        if (User32.GetAsyncKeyState(ShootKey) != 0)
+                                        if (User32.GetAsyncKeyState(AimKey) != 0)
                                         {
                                             if (Head)
                                             {
@@ -479,7 +495,7 @@ namespace FutureNNAimbot
                                                 if (SmoothAim <= 0)
                                                 {
                                                     User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyHead.Left - size.X / 2) + (nearestEnemyHead.Width / 2))), Convert.ToInt32((nearestEnemyHead.Top - size.Y / 2 + nearestEnemyHead.Height / 7 + 1 * shooting)), 0, (UIntPtr)0);
-                                                    if (ShootKey != Keys.LButton)
+                                                    if (AimKey != Keys.LButton && AutoShoot)
                                                     {
                                                         User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
                                                         User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
@@ -496,7 +512,7 @@ namespace FutureNNAimbot
                                                     }
                                                     else
                                                     {
-                                                        if (ShootKey != Keys.LButton)
+                                                        if (AimKey != Keys.LButton && AutoShoot)
                                                         {
                                                             User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
                                                             User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
@@ -514,7 +530,7 @@ namespace FutureNNAimbot
                                                 if (SmoothAim <= 0)
                                                 {
                                                     User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyBody.Left - size.X / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - size.Y / 2 + nearestEnemyBody.Height / 7 + 1 * shooting)), 0, (UIntPtr)0);
-                                                    if (ShootKey != Keys.LButton)
+                                                    if (AimKey != Keys.LButton && AutoShoot)
                                                     {
                                                         User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
                                                         User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
@@ -531,7 +547,7 @@ namespace FutureNNAimbot
                                                     }
                                                     else
                                                     {
-                                                        if (ShootKey != Keys.LButton)
+                                                        if (AimKey != Keys.LButton && AutoShoot)
                                                         {
                                                             User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
                                                             User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
