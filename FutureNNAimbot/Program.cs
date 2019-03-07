@@ -1,17 +1,17 @@
 using Alturos.Yolo;
+using GameOverlay.Drawing;
+using GameOverlay.Windows;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using GameOverlay.Drawing;
-using GameOverlay.Windows;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
@@ -141,7 +141,7 @@ namespace FutureNNAimbot
             }
 
             //Vars
-            
+
 
             size.X = settings[0].SizeX;
             size.Y = settings[0].SizeY;
@@ -155,7 +155,7 @@ namespace FutureNNAimbot
             bool Information = settings[0].Information;
             bool Head = settings[0].Head;
             bool AutoShoot = settings[0].AutoShoot;
-            
+
 
 
             int i = 0;
@@ -433,7 +433,7 @@ namespace FutureNNAimbot
                     {
                         selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
                     }
-                    gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), 
+                    gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0),
                         $"Object {objects[selectedObject]};" +
                         $"SmoothAim {Math.Round(SmoothAim, 2)};" +
                         $"Head {Head};" +
@@ -617,19 +617,26 @@ namespace FutureNNAimbot
 
         public static void PrepareFiles(string game)
         {
+            if (!Directory.Exists("defaultfiles"))
+            {
+                MessageBox.Show($"You dont have the defaultfiles... download them from MEGA (link on the forumpage!)");
+                Process.GetCurrentProcess().Kill();
+            }
+            else
+            {
+                File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{game}_trainmore.cmd", true);
+                if (File.Exists($"trainfiles/{game}.cfg")) File.Copy($"trainfiles/{game}.cfg", $"darknet/{game}.cfg", true);
+                else File.Copy("defaultfiles/default.cfg", $"darknet/{game}.cfg", true);
 
-            File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{game}_trainmore.cmd", true);
-            if (File.Exists($"trainfiles/{game}.cfg")) File.Copy($"trainfiles/{game}.cfg", $"darknet/{game}.cfg", true);
-            else File.Copy("defaultfiles/default.cfg", $"darknet/{game}.cfg", true);
+                File.Copy("defaultfiles/default.conv.15", $"darknet/{game}.conv.15", true);
+                File.Copy("defaultfiles/default.data", $"darknet/data/{game}.data", true);
 
-            File.Copy("defaultfiles/default.conv.15", $"darknet/{game}.conv.15", true);
-            File.Copy("defaultfiles/default.data", $"darknet/data/{game}.data", true);
+                if (File.Exists($"trainfiles/{game}.names")) File.Copy($"trainfiles/{game}.names", $"darknet/{game}.names", true);
+                else File.Copy("defaultfiles/default.names", $"darknet/data/{game}.names", true);
 
-            if (File.Exists($"trainfiles/{game}.names")) File.Copy($"trainfiles/{game}.names", $"darknet/{game}.names", true);
-            else File.Copy("defaultfiles/default.names", $"darknet/data/{game}.names", true);
-
-            File.Copy("defaultfiles/default.txt", $"darknet/data/{game}.txt", true);
-            File.Copy("defaultfiles/default.cmd", $"darknet/{game}.cmd", true);
+                File.Copy("defaultfiles/default.txt", $"darknet/data/{game}.txt", true);
+                File.Copy("defaultfiles/default.cmd", $"darknet/{game}.cmd", true);
+            }
         }
     }
 }
