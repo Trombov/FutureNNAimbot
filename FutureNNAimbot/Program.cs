@@ -170,10 +170,14 @@ namespace FutureNNAimbot
 
             YoloWrapper yoloWrapper = null;
             //Check compatibility
-            if (Process.GetProcessesByName(game).Count() == 0)
+            while (Process.GetProcessesByName(game).Count() == 0)
             {
-                MessageBox.Show($"You have not launched {game}...");
-                Process.GetCurrentProcess().Kill();
+                DialogResult dialogResult = MessageBox.Show($"You have not launched {game} yet.", "Game not found", MessageBoxButtons.RetryCancel);
+                if (dialogResult == DialogResult.Retry)
+                    continue;
+                else
+                    Process.GetCurrentProcess().Kill();
+
             }
 
             if (File.Exists($"trainfiles/{game}.cfg") && File.Exists($"trainfiles/{game}.weights") && File.Exists($"trainfiles/{game}.names"))
