@@ -595,19 +595,28 @@ namespace FutureNNAimbot
 
         public static void PrepareFiles(string game)
         {
+            try
+            {
+                File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{game}_trainmore.cmd", true);
+                if (File.Exists($"trainfiles/{game}.cfg")) File.Copy($"trainfiles/{game}.cfg", $"darknet/{game}.cfg", true);
+                else File.Copy("defaultfiles/default.cfg", $"darknet/{game}.cfg", true);
 
-            File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{game}_trainmore.cmd", true);
-            if (File.Exists($"trainfiles/{game}.cfg")) File.Copy($"trainfiles/{game}.cfg", $"darknet/{game}.cfg", true);
-            else File.Copy("defaultfiles/default.cfg", $"darknet/{game}.cfg", true);
+                File.Copy("defaultfiles/default.conv.15", $"darknet/{game}.conv.15", true);
+                File.Copy("defaultfiles/default.data", $"darknet/data/{game}.data", true);
 
-            File.Copy("defaultfiles/default.conv.15", $"darknet/{game}.conv.15", true);
-            File.Copy("defaultfiles/default.data", $"darknet/data/{game}.data", true);
+                if (File.Exists($"trainfiles/{game}.names")) File.Copy($"trainfiles/{game}.names", $"darknet/{game}.names", true);
+                else File.Copy("defaultfiles/default.names", $"darknet/data/{game}.names", true);
 
-            if (File.Exists($"trainfiles/{game}.names")) File.Copy($"trainfiles/{game}.names", $"darknet/{game}.names", true);
-            else File.Copy("defaultfiles/default.names", $"darknet/data/{game}.names", true);
-
-            File.Copy("defaultfiles/default.txt", $"darknet/data/{game}.txt", true);
-            File.Copy("defaultfiles/default.cmd", $"darknet/{game}.cmd", true);
+                File.Copy("defaultfiles/default.txt", $"darknet/data/{game}.txt", true);
+                File.Copy("defaultfiles/default.cmd", $"darknet/{game}.cmd", true);
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                DialogResult dialogResult = MessageBox.Show($"Looks like you are missing the mainfiles! Do you want to download them?","Mainfiles missing", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                    System.Diagnostics.Process.Start("https://mega.nz/#F!e5FUnQRS!vpVjMjmeNnU0lHUWieOR4A");
+                Process.GetCurrentProcess().Kill();
+            }
         }
     }
 }
