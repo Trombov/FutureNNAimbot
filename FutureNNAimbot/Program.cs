@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization;
+using Rectangle = GameOverlay.Drawing.Rectangle;
 
 namespace FutureNNAimbot
 {
@@ -127,7 +128,7 @@ namespace FutureNNAimbot
         {
             // Read settings
             DataContractJsonSerializer Settings = new DataContractJsonSerializer(typeof(Settings[]));
-            Settings[] settings = null;
+            Settings settings = null;
             Settings auto_config = new Settings(320, 320, "game", true, Keys.MButton, Keys.Insert, Keys.Home, Keys.NumPad9, 0.1f, true, false, true);
             using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate))
             {
@@ -137,24 +138,24 @@ namespace FutureNNAimbot
                     MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                     return;
                 }
-                else settings = (Settings[])Settings.ReadObject(fs);
+                else settings = ((Settings[])Settings.ReadObject(fs))[0];
             }
 
             //Vars
             
 
-            size.X = settings[0].SizeX;
-            size.Y = settings[0].SizeY;
-            string game = settings[0].Game;
-            bool SimpleRCS = settings[0].SimpleRCS;
-            Keys AimKey = settings[0].AimKey;
-            Keys TrainModeKey = settings[0].TrainModeKey;
-            Keys ScreenshotKey = settings[0].ScreenshotKey;
-            Keys ScreenshotModeKey = settings[0].ScreenshotModeKey;
-            float SmoothAim = settings[0].SmoothAim;
-            bool Information = settings[0].Information;
-            bool Head = settings[0].Head;
-            bool AutoShoot = settings[0].AutoShoot;
+            size.X = settings.SizeX;
+            size.Y = settings.SizeY;
+            string game = settings.Game;
+            bool SimpleRCS = settings.SimpleRCS;
+            Keys AimKey = settings.AimKey;
+            Keys TrainModeKey = settings.TrainModeKey;
+            Keys ScreenshotKey = settings.ScreenshotKey;
+            Keys ScreenshotModeKey = settings.ScreenshotModeKey;
+            float SmoothAim = settings.SmoothAim;
+            bool Information = settings.Information;
+            bool Head = settings.Head;
+            bool AutoShoot = settings.AutoShoot;
             
 
 
@@ -267,7 +268,7 @@ namespace FutureNNAimbot
 
                 if (User32.GetAsyncKeyState(ScreenshotModeKey) == -32767)
                 {
-                    screenshotMode = screenshotMode == true ? false : true;
+                    screenshotMode = !screenshotMode;
                 }
 
                 _window.X = coordinates.X - size.X / 2;
@@ -284,51 +285,43 @@ namespace FutureNNAimbot
                     if (User32.GetAsyncKeyState(Keys.Left) != 0)
                     {
                         if (trainBox.Width <= 0)
-                        {
                             continue;
-                        }
-                        else trainBox.Width -= 1;
+                        trainBox.Width -= 1;
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Down) != 0)
                     {
                         if (trainBox.Height >= size.Y)
-                        {
                             continue;
-                        }
-                        else trainBox.Height += 1;
+                        trainBox.Height += 1;
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Right) != 0)
                     {
                         if (trainBox.Width >= size.X)
-                        {
                             continue;
-                        }
-                        else trainBox.Width += 1;
+                        trainBox.Width += 1;
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Up) != 0)
                     {
                         if (trainBox.Height <= 0)
-                        {
                             continue;
-                        }
-                        else trainBox.Height -= 1;
+                        trainBox.Height -= 1;
                     }
 
                     gfx.DrawText(_graphics.CreateFont("Arial", 14), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), "Training mode. Object: " + objects[selectedObject] + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
-                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), GameOverlay.Drawing.Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
-                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
+                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
+                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
                     if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
                     {
-                        selectedObject = selectedObject + 1 == objects.Count() ? 0 : selectedObject + 1;
+                        selectedObject = (selectedObject + 1) % objects.Count();
                     }
 
                     if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
                     {
-                        selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
+                        selectedObject = (selectedObject - 1 + objects.Count()) % objects.Count();
                     }
 
                     if (User32.GetAsyncKeyState(ScreenshotKey) == -32767)
@@ -402,36 +395,36 @@ namespace FutureNNAimbot
                 {
                     if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
                     {
-                        selectedObject = selectedObject + 1 == objects.Count() ? 0 : selectedObject + 1;
+                        selectedObject = (selectedObject + 1) % objects.Count();
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Up) == -32767)
                     {
-                        SmoothAim = SmoothAim >= 1 ? SmoothAim : SmoothAim + 0.05f;
+                        SmoothAim = Math.Min(SmoothAim + 0.05f, 1);
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Down) == -32767)
                     {
-                        SmoothAim = SmoothAim <= 0 ? SmoothAim : SmoothAim - 0.05f;
+                        SmoothAim = Math.Max(SmoothAim - 0.05f, 0);
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Delete) == -32767)
                     {
-                        Head = Head == true ? false : true;
+                        Head = !Head;
                     }
 
                     if (User32.GetAsyncKeyState(Keys.Home) == -32767)
                     {
                         shooting = 0;
-                        SimpleRCS = SimpleRCS == true ? false : true;
+                        SimpleRCS = !SimpleRCS;
                     }
                     if (User32.GetAsyncKeyState(Keys.End) == -32767)
                     {
-                        AutoShoot = AutoShoot == true ? false : true;
+                        AutoShoot = !AutoShoot;
                     }
                     if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
                     {
-                        selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
+                        selectedObject = (selectedObject - 1 + objects.Count()) % objects.Count();
                     }
                     gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), 
                         $"Object {objects[selectedObject]};" +
@@ -452,10 +445,10 @@ namespace FutureNNAimbot
 
                             foreach (var item in items)
                             {
-                                if (item.Confidence > (double)0.4)
+                                if (item.Confidence > 0.4d)
                                 {
-                                    GameOverlay.Drawing.Rectangle head = GameOverlay.Drawing.Rectangle.Create(item.X + Convert.ToInt32(item.Width / 2.9), item.Y, Convert.ToInt32(item.Width / 3), item.Height / 7);
-                                    GameOverlay.Drawing.Rectangle body = GameOverlay.Drawing.Rectangle.Create(item.X + Convert.ToInt32(item.Width / 6), item.Y + item.Height / 6, Convert.ToInt32(item.Width / 1.5f), item.Height / 3);
+                                    Rectangle head = Rectangle.Create(item.X + Convert.ToInt32(item.Width / 2.9), item.Y, Convert.ToInt32(item.Width / 3), item.Height / 7);
+                                    Rectangle body = Rectangle.Create(item.X + Convert.ToInt32(item.Width / 6), item.Y + item.Height / 6, Convert.ToInt32(item.Width / 1.5f), item.Height / 3);
 
                                     if (Information)
                                     {
@@ -466,7 +459,7 @@ namespace FutureNNAimbot
 
                                     if (item.Type == objects[selectedObject])
                                     {
-                                        gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
+                                        gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
 
                                         if (Head)
                                         {
@@ -490,7 +483,7 @@ namespace FutureNNAimbot
                                             {
                                                 Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2)).Last();
 
-                                                GameOverlay.Drawing.Rectangle nearestEnemyHead = GameOverlay.Drawing.Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
+                                                Rectangle nearestEnemyHead = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
 
                                                 if (SmoothAim <= 0)
                                                 {
@@ -526,7 +519,7 @@ namespace FutureNNAimbot
 
                                                 Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).Last();
 
-                                                GameOverlay.Drawing.Rectangle nearestEnemyBody = GameOverlay.Drawing.Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
+                                                Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
                                                 if (SmoothAim <= 0)
                                                 {
                                                     User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyBody.Left - size.X / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - size.Y / 2 + nearestEnemyBody.Height / 7 + 1 * shooting)), 0, (UIntPtr)0);
@@ -561,7 +554,7 @@ namespace FutureNNAimbot
                                     }
                                     else
                                     {
-                                        gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Green), GameOverlay.Drawing.Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
+                                        gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Green), Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
                                     }
                                 }
 
@@ -571,7 +564,7 @@ namespace FutureNNAimbot
                     }
 
                 }
-                gfx.FillRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), GameOverlay.Drawing.Rectangle.Create(size.X / 2, size.Y / 2, 4, 4));
+                gfx.FillRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), Rectangle.Create(size.X / 2, size.Y / 2, 4, 4));
 
                 gfx.EndScene();
             }
