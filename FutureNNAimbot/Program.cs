@@ -258,7 +258,7 @@ namespace FutureNNAimbot
                     {
 
                         objects = File.ReadAllLines($"trainfiles/{game}.names");
-                        trainingMode = trainingMode == true ? false : true;
+                        trainingMode = !trainingMode;
                     }
                 }
 
@@ -352,6 +352,9 @@ namespace FutureNNAimbot
 
                     if (User32.GetAsyncKeyState(Keys.End) == -32767)
                     {
+                        gfx.ClearScene();
+                        gfx.EndScene();
+
                         Console.WriteLine("Okay, we have the pictures for training. Let's train the Neural Network....");
                         File.WriteAllText($"darknet/{game}.cfg", File.ReadAllText($"darknet/{game}.cfg").Replace("NUMBER", objects.Count().ToString()).Replace("FILTERNUM", ((objects.Count() + 5) * 3).ToString()));
                         File.WriteAllText($"darknet/data/{game}.data", File.ReadAllText($"darknet/data/{game}.data").Replace("NUMBER", objects.Count().ToString()).Replace("GAME", game));
@@ -395,6 +398,7 @@ namespace FutureNNAimbot
                             else Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
                         }
                         Console.WriteLine("Okay! Training has finished. Let's check detection in the game!");
+                        gfx.BeginScene();
                     }
                 }
                 else
