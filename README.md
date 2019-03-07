@@ -123,4 +123,4 @@ Version 0.6-alpha:
 2. Add movement for blue box
 3. Add movement for red box
 4. Advanced RCS settings
-5. Config testing for better recognizion
+5. Config testing for better recognition

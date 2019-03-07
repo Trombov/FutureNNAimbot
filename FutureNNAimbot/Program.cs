@@ -144,7 +144,7 @@ namespace FutureNNAimbot
             }
 
             //Vars
-
+            
 
             size.X = settings.SizeX;
             size.Y = settings.SizeY;
@@ -158,7 +158,7 @@ namespace FutureNNAimbot
             bool Information = settings.Information;
             bool Head = settings.Head;
             bool AutoShoot = settings.AutoShoot;
-
+            
 
 
             int i = 0;
@@ -433,7 +433,7 @@ namespace FutureNNAimbot
                     {
                         selectedObject = (selectedObject - 1 + objects.Count()) % objects.Count();
                     }
-                    gfx.DrawText(_graphics.CreateFont("Arial", 10), redbrush, new GameOverlay.Drawing.Point(0, 0),
+                    gfx.DrawText(_graphics.CreateFont("Arial", 10), redbrush, new GameOverlay.Drawing.Point(0, 0), 
                         $"Object {objects[selectedObject]};" +
                         $"SmoothAim {Math.Round(SmoothAim, 2)};" +
                         $"Head {Head};" +
@@ -633,7 +633,7 @@ namespace FutureNNAimbot
             }
             catch (DirectoryNotFoundException e)
             {
-                DialogResult dialogResult = MessageBox.Show($"Looks like you are missing the mainfiles! Do you want to download them?", "Mainfiles missing", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show($"Looks like you are missing the mainfiles! Do you want to download them?","Mainfiles missing", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                     System.Diagnostics.Process.Start("https://mega.nz/#F!e5FUnQRS!vpVjMjmeNnU0lHUWieOR4A");
                 Process.GetCurrentProcess().Kill();
