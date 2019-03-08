@@ -158,9 +158,10 @@ namespace FutureNNAimbot
             bool Information = settings.Information;
             bool Head = settings.Head;
             bool AutoShoot = settings.AutoShoot;
-            
 
 
+            System.Drawing.Point CenterScreen = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, Screen.PrimaryScreen.Bounds.Height / 2);
+            bool CursorToCenter = false;
             int i = 0;
             int selectedObject = 0;
             int shooting = 0;
@@ -248,7 +249,7 @@ namespace FutureNNAimbot
             GameOverlay.Drawing.Graphics gfx = _graphics;
 
             System.Drawing.Rectangle trainBox = new System.Drawing.Rectangle(0, 0, size.X / 2, size.Y / 2);
-
+            
             while (true)
             {
                 coordinates = Cursor.Position;
@@ -282,6 +283,14 @@ namespace FutureNNAimbot
 
                 gfx.DrawRectangle(greenbrush, 0, 0, size.X, size.Y, 2);
 
+                if(CursorToCenter)
+                    Cursor.Position = CenterScreen;
+
+                if (isKeyToggled(Keys.NumPad0))
+                {
+                    CursorToCenter = !CursorToCenter;
+                }
+
                 if (trainingMode)
                 {
                     int rand = random.Next(5000, 999999);
@@ -314,7 +323,10 @@ namespace FutureNNAimbot
                         trainBox.Height -= 1;
                     }
 
-                    gfx.DrawText(_graphics.CreateFont("Arial", 14), redbrush, new GameOverlay.Drawing.Point(0, 0), "Training mode. Object: " + objects[selectedObject] + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
+                    gfx.DrawText(_graphics.CreateFont("Arial", 14), redbrush, new GameOverlay.Drawing.Point(0, 0), 
+                        $"Training mode. Object: {objects[selectedObject]}" + Environment.NewLine +
+                        $"ScreenshotMode: {(screenshotMode == true ? "following" : "centered")}" + Environment.NewLine + 
+                        $"CursorToCenter: {CursorToCenter}");
                     gfx.DrawRectangle(bluebrush, Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
                     gfx.DrawRectangle(redbrush, Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
                     if (isKeyToggled(Keys.PageUp))
@@ -437,8 +449,9 @@ namespace FutureNNAimbot
                         $"Object {objects[selectedObject]};" +
                         $"SmoothAim {Math.Round(SmoothAim, 2)};" +
                         $"Head {Head};" +
-                        $"SimpleRCS {SimpleRCS};" +
-                        $"AutoShoot {AutoShoot}");
+                        $"SimpleRCS {SimpleRCS};" + Environment.NewLine +
+                        $"AutoShoot {AutoShoot};" +
+                        $"CursorToCenter: {CursorToCenter}");
 
                     using (MemoryStream ms = new MemoryStream())
                     {
