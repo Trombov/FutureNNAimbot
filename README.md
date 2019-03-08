@@ -1,6 +1,25 @@
 # FutureNNAimbot
 Universal neural network aimbot for all games with custom training mode
 
+This is a modified version specifically for Apex Legends.
+Download Train data from https://github.com/vadash/a_pepe_x_legends_training_data/tree/master/img and follow the instruccions on how to use nvidia profiler.
+
+Sample config:
+[{"Game":"r5apex",
+"Head":false,
+"Information":true,
+"DrawAreaRectangle":false,
+"DrawText":true,
+"ScreenshotKey":36,
+"ScreenshotModeKey":105,
+"ShootKey":2,
+"SimpleRCS":true,
+"SizeX":320,
+"SizeY":320,
+"SmoothAim":0.80,
+"TrainModeKey":45
+}]
+
 ## NVIDIA ONLY
 
 This cheat uses machine learning, which recognizes objects in a certain range, then aims at the object and shoots. It does not interfere in any way with the memory of the game, it simply takes screenshots and recognizes objects.
