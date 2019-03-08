@@ -119,7 +119,7 @@ Version 0.6-alpha:
 
 **TODO:**
 ---
-1. Fix problems with aiming on some games(Rainbow Six, etc)
+1 Fix following mode (sometimes not working good)
 2. Add movement for blue box
 3. Add movement for red box
 4. Advanced RCS settings
