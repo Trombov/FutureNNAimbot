@@ -1,17 +1,18 @@
 using Alturos.Yolo;
-using GameOverlay.Drawing;
-using GameOverlay.Windows;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
+using GameOverlay.Drawing;
+using GameOverlay.Windows;
+using System.Diagnostics;
 using System.Windows.Forms;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+using Rectangle = GameOverlay.Drawing.Rectangle;
 
 namespace FutureNNAimbot
 {
@@ -127,37 +128,40 @@ namespace FutureNNAimbot
         {
             // Read settings
             DataContractJsonSerializer Settings = new DataContractJsonSerializer(typeof(Settings[]));
-            Settings[] settings = null;
+            Settings settings = null;
             Settings auto_config = new Settings(320, 320, "game", true, Keys.MButton, Keys.Insert, Keys.Home, Keys.NumPad9, 0.1f, true, false, true);
             using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate))
             {
                 if (fs.Length == 0)
                 {
                     Settings.WriteObject(fs, new Settings[1] { auto_config });
+                    fs.Close();
+                    File.WriteAllText("config.json", File.ReadAllText("config.json").Replace(",", ",\n"));
                     MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                     return;
                 }
-                else settings = (Settings[])Settings.ReadObject(fs);
+                else settings = ((Settings[])Settings.ReadObject(fs))[0];
             }
 
             //Vars
+            
+
+            size.X = settings.SizeX;
+            size.Y = settings.SizeY;
+            string game = settings.Game;
+            bool SimpleRCS = settings.SimpleRCS;
+            Keys AimKey = settings.AimKey;
+            Keys TrainModeKey = settings.TrainModeKey;
+            Keys ScreenshotKey = settings.ScreenshotKey;
+            Keys ScreenshotModeKey = settings.ScreenshotModeKey;
+            float SmoothAim = settings.SmoothAim;
+            bool Information = settings.Information;
+            bool Head = settings.Head;
+            bool AutoShoot = settings.AutoShoot;
 
 
-            size.X = settings[0].SizeX;
-            size.Y = settings[0].SizeY;
-            string game = settings[0].Game;
-            bool SimpleRCS = settings[0].SimpleRCS;
-            Keys AimKey = settings[0].AimKey;
-            Keys TrainModeKey = settings[0].TrainModeKey;
-            Keys ScreenshotKey = settings[0].ScreenshotKey;
-            Keys ScreenshotModeKey = settings[0].ScreenshotModeKey;
-            float SmoothAim = settings[0].SmoothAim;
-            bool Information = settings[0].Information;
-            bool Head = settings[0].Head;
-            bool AutoShoot = settings[0].AutoShoot;
-
-
-
+            System.Drawing.Point CenterScreen = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, Screen.PrimaryScreen.Bounds.Height / 2);
+            bool CursorToCenter = false;
             int i = 0;
             int selectedObject = 0;
             int shooting = 0;
@@ -169,10 +173,14 @@ namespace FutureNNAimbot
 
             YoloWrapper yoloWrapper = null;
             //Check compatibility
-            if (Process.GetProcessesByName(game).Count() == 0)
+            while (Process.GetProcessesByName(game).Count() == 0)
             {
-                MessageBox.Show($"You have not launched {game}...");
-                Process.GetCurrentProcess().Kill();
+                DialogResult dialogResult = MessageBox.Show($"You have not launched {game} yet.", "Game not found", MessageBoxButtons.RetryCancel);
+                if (dialogResult == DialogResult.Retry)
+                    continue;
+                else
+                    Process.GetCurrentProcess().Kill();
+
             }
 
             if (File.Exists($"trainfiles/{game}.cfg") && File.Exists($"trainfiles/{game}.weights") && File.Exists($"trainfiles/{game}.names"))
@@ -181,23 +189,19 @@ namespace FutureNNAimbot
                 Console.Clear();
                 if (yoloWrapper.EnvironmentReport.CudaExists == false)
                 {
-                    Console.WriteLine("Install CUDA 10");
-                    Process.GetCurrentProcess().Kill();
+                    giveErrorMessage("Install CUDA 10");
                 }
                 if (yoloWrapper.EnvironmentReport.CudnnExists == false)
                 {
-                    Console.WriteLine("Cudnn doesn't exist");
-                    Process.GetCurrentProcess().Kill();
+                    giveErrorMessage("Cudnn doesn't exist");
                 }
                 if (yoloWrapper.EnvironmentReport.MicrosoftVisualCPlusPlus2017RedistributableExists == false)
                 {
-                    Console.WriteLine("Install Microsoft Visual C++ 2017 Redistributable");
-                    Process.GetCurrentProcess().Kill();
+                    giveErrorMessage("Install Microsoft Visual C++ 2017 Redistributable");
                 }
                 if (yoloWrapper.DetectionSystem.ToString() != "GPU")
                 {
-                    MessageBox.Show("No GPU card detected. Exiting...");
-                    Process.GetCurrentProcess().Kill();
+                    giveErrorMessage("No GPU card detected. Exiting...");
                 }
                 objects = File.ReadAllLines($"trainfiles/{game}.names");
             }
@@ -238,11 +242,14 @@ namespace FutureNNAimbot
             _graphics.WindowHandle = _window.Handle;
             _graphics.Setup();
 
+            GameOverlay.Drawing.SolidBrush greenbrush = _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Green);
+            GameOverlay.Drawing.SolidBrush redbrush = _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red);
+            GameOverlay.Drawing.SolidBrush bluebrush = _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue);
 
             GameOverlay.Drawing.Graphics gfx = _graphics;
 
             System.Drawing.Rectangle trainBox = new System.Drawing.Rectangle(0, 0, size.X / 2, size.Y / 2);
-
+            
             while (true)
             {
                 coordinates = Cursor.Position;
@@ -256,18 +263,17 @@ namespace FutureNNAimbot
                 trainBox.X = size.X / 2 - trainBox.Width / 2;
                 trainBox.Y = size.Y / 2 - trainBox.Height / 2;
 
-                if (User32.GetAsyncKeyState(TrainModeKey) == -32767)
+                if (isKeyToggled(TrainModeKey))
                 {
                     if (yoloWrapper != null)
                     {
                         objects = File.ReadAllLines($"trainfiles/{game}.names");
-                        trainingMode = trainingMode == true ? false : true;
+                        trainingMode = !trainingMode;
                     }
                 }
-
-                if (User32.GetAsyncKeyState(ScreenshotModeKey) == -32767)
+                if (isKeyToggled(ScreenshotModeKey))
                 {
-                    screenshotMode = screenshotMode == true ? false : true;
+                    screenshotMode = !screenshotMode;
                 }
 
                 _window.X = coordinates.X - size.X / 2;
@@ -275,63 +281,65 @@ namespace FutureNNAimbot
                 gfx.BeginScene();
                 gfx.ClearScene();
 
-                gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Green), 0, 0, size.X, size.Y, 2);
+                gfx.DrawRectangle(greenbrush, 0, 0, size.X, size.Y, 2);
+
+                if(CursorToCenter)
+                    Cursor.Position = CenterScreen;
+
+                if (isKeyToggled(Keys.NumPad0))
+                {
+                    CursorToCenter = !CursorToCenter;
+                }
 
                 if (trainingMode)
                 {
                     int rand = random.Next(5000, 999999);
 
-                    if (User32.GetAsyncKeyState(Keys.Left) != 0)
+                    if (isKeyPressed(Keys.Left))
                     {
                         if (trainBox.Width <= 0)
-                        {
                             continue;
-                        }
-                        else trainBox.Width -= 1;
+                        trainBox.Width -= 1;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Down) != 0)
+                    if (isKeyPressed(Keys.Down))
                     {
                         if (trainBox.Height >= size.Y)
-                        {
                             continue;
-                        }
-                        else trainBox.Height += 1;
+                        trainBox.Height += 1;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Right) != 0)
+                    if (isKeyPressed(Keys.Right))
                     {
                         if (trainBox.Width >= size.X)
-                        {
                             continue;
-                        }
-                        else trainBox.Width += 1;
+                        trainBox.Width += 1;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Up) != 0)
+                    if (isKeyPressed(Keys.Up))
                     {
                         if (trainBox.Height <= 0)
-                        {
                             continue;
-                        }
-                        else trainBox.Height -= 1;
+                        trainBox.Height -= 1;
                     }
 
-                    gfx.DrawText(_graphics.CreateFont("Arial", 14), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0), "Training mode. Object: " + objects[selectedObject] + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
-                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), GameOverlay.Drawing.Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
-                    gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
-
-                    if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
+                    gfx.DrawText(_graphics.CreateFont("Arial", 14), redbrush, new GameOverlay.Drawing.Point(0, 0), 
+                        $"Training mode. Object: {objects[selectedObject]}" + Environment.NewLine +
+                        $"ScreenshotMode: {(screenshotMode == true ? "following" : "centered")}" + Environment.NewLine + 
+                        $"CursorToCenter: {CursorToCenter}");
+                    gfx.DrawRectangle(bluebrush, Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
+                    gfx.DrawRectangle(redbrush, Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
+                    if (isKeyToggled(Keys.PageUp))
                     {
-                        selectedObject = selectedObject + 1 == objects.Count() ? 0 : selectedObject + 1;
+                        selectedObject = (selectedObject + 1) % objects.Count();
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
+                    if (isKeyToggled(Keys.PageDown))
                     {
-                        selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
+                        selectedObject = (selectedObject - 1 + objects.Count()) % objects.Count();
                     }
 
-                    if (User32.GetAsyncKeyState(ScreenshotKey) == -32767)
+                    if (isKeyToggled(ScreenshotKey))
                     {
                         float relative_center_x = (float)(trainBox.X + trainBox.Width / 2) / size.X;
                         float relative_center_y = (float)(trainBox.Y + trainBox.Height / 2) / size.Y;
@@ -342,8 +350,7 @@ namespace FutureNNAimbot
                         i++;
                         Console.Beep();
                     }
-
-                    if (User32.GetAsyncKeyState(Keys.Back) == -32767)
+                    if (isKeyToggled(Keys.Back))
                     {
                         bitmap.Save($"darknet/data/img/{game}{i.ToString()}{rand}.png", System.Drawing.Imaging.ImageFormat.Png);
                         File.WriteAllText($"darknet/data/img/{game}{i.ToString()}{rand}.txt", "");
@@ -351,8 +358,11 @@ namespace FutureNNAimbot
                         Console.Beep();
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.End) == -32767)
+                    if (isKeyToggled(Keys.End))
                     {
+                        gfx.ClearScene();
+                        gfx.EndScene();
+
                         Console.WriteLine("Okay, we have the pictures for training. Let's train the Neural Network....");
                         File.WriteAllText($"darknet/{game}.cfg", File.ReadAllText($"darknet/{game}.cfg").Replace("NUMBER", objects.Count().ToString()).Replace("FILTERNUM", ((objects.Count() + 5) * 3).ToString()));
                         File.WriteAllText($"darknet/{game}.cfg", File.ReadAllText($"darknet/{game}.cfg").Replace("batch=1", "batch=64").Replace("subdivisions=1", "subdivisions=8"));
@@ -369,8 +379,9 @@ namespace FutureNNAimbot
                         }
 
                         File.WriteAllText($"darknet/data/{game}.txt", PathOfImg);
-
-                        Process.GetProcessesByName(game)[0].Kill();
+                        DialogResult dialogResult = MessageBox.Show($"Traing requires your gpu. Do you want to close the game?", "Close game", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                            Process.GetProcessesByName(game)[0].Kill();
                         if (File.Exists($"trainfiles/{game}.weights"))
                         {
                             File.Copy($"trainfiles/{game}.weights", $"darknet/{game}.weights", true);
@@ -396,49 +407,51 @@ namespace FutureNNAimbot
                             else Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
                         }
                         Console.WriteLine("Okay! Training has finished. Let's check detection in the game!");
+                        gfx.BeginScene();
                     }
                 }
                 else
                 {
-                    if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
+                    if (isKeyToggled(Keys.PageUp))
                     {
-                        selectedObject = selectedObject + 1 == objects.Count() ? 0 : selectedObject + 1;
+                        selectedObject = (selectedObject + 1) % objects.Count();
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Up) == -32767)
+                    if (isKeyToggled(Keys.Up))
                     {
-                        SmoothAim = SmoothAim >= 1 ? SmoothAim : SmoothAim + 0.05f;
+                        SmoothAim = Math.Min(SmoothAim + 0.05f, 1);
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Down) == -32767)
+                    if (isKeyToggled(Keys.Down))
                     {
-                        SmoothAim = SmoothAim <= 0 ? SmoothAim : SmoothAim - 0.05f;
+                        SmoothAim = Math.Max(SmoothAim - 0.05f, 0);
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Delete) == -32767)
+                    if (isKeyToggled(Keys.Delete))
                     {
-                        Head = Head == true ? false : true;
+                        Head = !Head;
                     }
 
-                    if (User32.GetAsyncKeyState(Keys.Home) == -32767)
+                    if (isKeyToggled(Keys.Home))
                     {
                         shooting = 0;
-                        SimpleRCS = SimpleRCS == true ? false : true;
+                        SimpleRCS = !SimpleRCS;
                     }
-                    if (User32.GetAsyncKeyState(Keys.End) == -32767)
+                    if (isKeyToggled(Keys.End))
                     {
-                        AutoShoot = AutoShoot == true ? false : true;
+                        AutoShoot = !AutoShoot;
                     }
-                    if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
+                    if (isKeyToggled(Keys.PageDown))
                     {
-                        selectedObject = selectedObject == 0 ? objects.Count() - 1 : selectedObject - 1;
+                        selectedObject = (selectedObject - 1 + objects.Count()) % objects.Count();
                     }
-                    gfx.DrawText(_graphics.CreateFont("Arial", 10), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), new GameOverlay.Drawing.Point(0, 0),
+                    gfx.DrawText(_graphics.CreateFont("Arial", 10), redbrush, new GameOverlay.Drawing.Point(0, 0), 
                         $"Object {objects[selectedObject]};" +
                         $"SmoothAim {Math.Round(SmoothAim, 2)};" +
                         $"Head {Head};" +
-                        $"SimpleRCS {SimpleRCS};" +
-                        $"AutoShoot {AutoShoot}");
+                        $"SimpleRCS {SimpleRCS};" + Environment.NewLine +
+                        $"AutoShoot {AutoShoot};" +
+                        $"CursorToCenter: {CursorToCenter}");
 
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -452,45 +465,45 @@ namespace FutureNNAimbot
 
                             foreach (var item in items)
                             {
-                                if (item.Confidence > (double)0.4)
+                                if (item.Confidence > 0.4d)
                                 {
-                                    GameOverlay.Drawing.Rectangle head = GameOverlay.Drawing.Rectangle.Create(item.X + Convert.ToInt32(item.Width / 2.9), item.Y, Convert.ToInt32(item.Width / 3), item.Height / 7);
-                                    GameOverlay.Drawing.Rectangle body = GameOverlay.Drawing.Rectangle.Create(item.X + Convert.ToInt32(item.Width / 6), item.Y + item.Height / 6, Convert.ToInt32(item.Width / 1.5f), item.Height / 3);
+                                    Rectangle head = Rectangle.Create(item.X + Convert.ToInt32(item.Width / 2.9), item.Y, Convert.ToInt32(item.Width / 3), item.Height / 7);
+                                    Rectangle body = Rectangle.Create(item.X + Convert.ToInt32(item.Width / 6), item.Y + item.Height / 6, Convert.ToInt32(item.Width / 1.5f), item.Height / 3);
 
                                     if (Information)
                                     {
-                                        if (Head) gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {DistanceBetweenCross(head.Left + head.Width / 2, head.Top + head.Height / 2)}");
-                                        else gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), _graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {DistanceBetweenCross(body.Left + body.Width / 2, body.Top + body.Height / 2)}");
+                                        if (Head) gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), redbrush, _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {DistanceBetweenCross(head.Left + head.Width / 2, head.Top + head.Height / 2)}");
+                                        else gfx.DrawTextWithBackground(_graphics.CreateFont("Arial", 12), redbrush, _graphics.CreateSolidBrush(0, 0, 0), new GameOverlay.Drawing.Point(item.X + item.Width, item.Y + item.Width), $"{item.Type} {DistanceBetweenCross(body.Left + body.Width / 2, body.Top + body.Height / 2)}");
 
                                     }
 
                                     if (item.Type == objects[selectedObject])
                                     {
-                                        gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Red), GameOverlay.Drawing.Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
+                                        gfx.DrawRectangle(redbrush, Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
 
                                         if (Head)
                                         {
 
-                                            gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), head, 2);
-                                            gfx.DrawCrosshair(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), head.Left + head.Width / 2, head.Top + head.Height / 2 + Convert.ToInt32(1 * shooting), 2, 2, CrosshairStyle.Cross);
-                                            gfx.DrawLine(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), size.X / 2, size.Y / 2, head.Left + head.Width / 2, head.Top + head.Height / 2 + Convert.ToInt32(1 * shooting), 2);
+                                            gfx.DrawRectangle(bluebrush, head, 2);
+                                            gfx.DrawCrosshair(bluebrush, head.Left + head.Width / 2, head.Top + head.Height / 2 + Convert.ToInt32(1 * shooting), 2, 2, CrosshairStyle.Cross);
+                                            gfx.DrawLine(bluebrush, size.X / 2, size.Y / 2, head.Left + head.Width / 2, head.Top + head.Height / 2 + Convert.ToInt32(1 * shooting), 2);
 
                                         }
                                         else
                                         {
-                                            gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), body, 2);
-                                            gfx.DrawCrosshair(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), body.Left + body.Width / 2, body.Top + body.Height / 2 + Convert.ToInt32(1 * shooting), 2, 2, CrosshairStyle.Cross);
-                                            gfx.DrawLine(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), size.X / 2, size.Y / 2, body.Left + body.Width / 2, body.Top + body.Height / 2 + Convert.ToInt32(1 * shooting), 2);
+                                            gfx.DrawRectangle(bluebrush, body, 2);
+                                            gfx.DrawCrosshair(bluebrush, body.Left + body.Width / 2, body.Top + body.Height / 2 + Convert.ToInt32(1 * shooting), 2, 2, CrosshairStyle.Cross);
+                                            gfx.DrawLine(bluebrush, size.X / 2, size.Y / 2, body.Left + body.Width / 2, body.Top + body.Height / 2 + Convert.ToInt32(1 * shooting), 2);
 
                                         }
 
-                                        if (User32.GetAsyncKeyState(AimKey) != 0)
+                                        if (isKeyPressed(AimKey))
                                         {
                                             if (Head)
                                             {
                                                 Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2)).Last();
 
-                                                GameOverlay.Drawing.Rectangle nearestEnemyHead = GameOverlay.Drawing.Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
+                                                Rectangle nearestEnemyHead = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
 
                                                 if (SmoothAim <= 0)
                                                 {
@@ -526,7 +539,7 @@ namespace FutureNNAimbot
 
                                                 Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).Last();
 
-                                                GameOverlay.Drawing.Rectangle nearestEnemyBody = GameOverlay.Drawing.Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
+                                                Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
                                                 if (SmoothAim <= 0)
                                                 {
                                                     User32.mouse_event(0x01, Convert.ToInt32(((nearestEnemyBody.Left - size.X / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - size.Y / 2 + nearestEnemyBody.Height / 7 + 1 * shooting)), 0, (UIntPtr)0);
@@ -561,7 +574,7 @@ namespace FutureNNAimbot
                                     }
                                     else
                                     {
-                                        gfx.DrawRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Green), GameOverlay.Drawing.Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
+                                        gfx.DrawRectangle(greenbrush, Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
                                     }
                                 }
 
@@ -571,7 +584,7 @@ namespace FutureNNAimbot
                     }
 
                 }
-                gfx.FillRectangle(_graphics.CreateSolidBrush(GameOverlay.Drawing.Color.Blue), GameOverlay.Drawing.Rectangle.Create(size.X / 2, size.Y / 2, 4, 4));
+                gfx.FillRectangle(bluebrush, Rectangle.Create(size.X / 2, size.Y / 2, 4, 4));
 
                 gfx.EndScene();
             }
@@ -582,8 +595,7 @@ namespace FutureNNAimbot
         {
             if (Process.GetProcessesByName(name).Count() == 0)
             {
-                MessageBox.Show($"Looks like you closed {name}...");
-                Process.GetCurrentProcess().Kill();
+                giveErrorMessage($"Looks like you closed {name}...");
             }
             IntPtr handle = Process.GetProcessesByName(name)[0].MainWindowHandle;
             IntPtr hdcSrc = User32.GetWindowDC(handle);
@@ -617,12 +629,7 @@ namespace FutureNNAimbot
 
         public static void PrepareFiles(string game)
         {
-            if (!Directory.Exists("defaultfiles"))
-            {
-                MessageBox.Show($"You dont have the defaultfiles... download them from MEGA (link on the forumpage!)");
-                Process.GetCurrentProcess().Kill();
-            }
-            else
+            try
             {
                 File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{game}_trainmore.cmd", true);
                 if (File.Exists($"trainfiles/{game}.cfg")) File.Copy($"trainfiles/{game}.cfg", $"darknet/{game}.cfg", true);
@@ -637,6 +644,29 @@ namespace FutureNNAimbot
                 File.Copy("defaultfiles/default.txt", $"darknet/data/{game}.txt", true);
                 File.Copy("defaultfiles/default.cmd", $"darknet/{game}.cmd", true);
             }
+            catch (DirectoryNotFoundException e)
+            {
+                DialogResult dialogResult = MessageBox.Show($"Looks like you are missing the mainfiles! Do you want to download them?","Mainfiles missing", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                    System.Diagnostics.Process.Start("https://mega.nz/#F!e5FUnQRS!vpVjMjmeNnU0lHUWieOR4A");
+                Process.GetCurrentProcess().Kill();
+            }
+        }
+
+        static bool isKeyPressed(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) != 0;
+        }
+
+        static bool isKeyToggled(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) == -32767;
+        }
+
+        static void giveErrorMessage(string s)
+        {
+            MessageBox.Show(s, "Error");
+            Process.GetCurrentProcess().Kill();
         }
     }
 }
