@@ -4,10 +4,10 @@ namespace FutureNNAimbot
 {
     public class GraphicsEx : Graphics
     {
-        public static Color AreaColor { get; set; } = new Color(0, 255, 0, 10);
-        public static Color TextColor { get; set; } = new Color(120, 255, 255, 255);
+        public static Color AreaColor { get; set; } = new Color(0, 255, 0, 10); //red
+        public static Color TextColor { get; set; } = new Color(120, 255, 255, 255);//turquoise
         public static Color BodyColor { get; set; } = new Color(0, 255, 0, 80);
-        public static Color HeadColor { get; set; } = new Color(255, 0, 0, 80);
+        public static Color HeadColor { get; set; } = new Color(255, 0, 0, 80); // blueish
 
         public static string DefaultFontstr { get; set; } = "Arial";
         public static int DefaultFontSize { get; set; } = 10;

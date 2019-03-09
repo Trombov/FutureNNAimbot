@@ -52,7 +52,7 @@ namespace FutureNNAimbot
                     var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, objects?[selectedObject], s, items,Firemode);
+                    dh.DrawPlaying(coordinates, objects?[selectedObject], s, items, objects[selectedObject]);
 
                 }
                 else
@@ -63,9 +63,9 @@ namespace FutureNNAimbot
         }
 
 
-        static bool lastMDwnState = false;
-        static bool Firemode = false;
-        static long lastTick = DateTime.Now.Ticks;
+        //static bool lastMDwnState = false;
+        //static bool Firemode = false;
+        //static long lastTick = DateTime.Now.Ticks;
 
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
