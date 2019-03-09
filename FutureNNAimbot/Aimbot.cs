@@ -10,22 +10,23 @@ namespace FutureNNAimbot
     public class Aimbot
     {
         private GameProcess gp;
+        private gController gc;
         private NeuralNet nn;
         private Settings s;
         private DrawHelper dh;
-        int selectedObject = 0;
         private int shooting = 0;
         private System.Drawing.Point coordinates;
         private bool Enabled = true;
         private string[] objects = null;
 
-        public Aimbot(Settings settings, GameProcess gameProcess, NeuralNet neuralNet)
+        public Aimbot(Settings settings, GameProcess gameProcess, gController gc, NeuralNet neuralNet)
         {
-            gp = gameProcess;
-            nn = neuralNet;
-            s = settings;
-            dh = new DrawHelper(settings);
-            objects = nn.TrainingNames;
+            this.gp = gameProcess;
+            this.gc = gc;
+            this.nn = neuralNet;
+            this.s = settings;
+            this.dh = new DrawHelper(settings);
+            this.objects = nn.TrainingNames;
         }
 
         public void Start()
@@ -52,8 +53,7 @@ namespace FutureNNAimbot
                     var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, objects?[selectedObject], s, items, objects[selectedObject]);
-
+                    dh.DrawPlaying(coordinates, objects?[s.selectedObject], s, items);
                 }
                 else
                 {
@@ -61,8 +61,7 @@ namespace FutureNNAimbot
                 }
             }
         }
-
-
+        
         //static bool lastMDwnState = false;
         //static bool Firemode = false;
         //static long lastTick = DateTime.Now.Ticks;
@@ -88,7 +87,7 @@ namespace FutureNNAimbot
         void Shooting(ref IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
             Rectangle enemyRectangle = Rectangle.Create(0,0,0,0);
-            items = items.Where(x => x.Type == objects[selectedObject]);
+            items = items.Where(x => x.Type == objects[s.selectedObject]);
             if (items.Count() == 0)
                 return;
             if (s.Head)
@@ -143,7 +142,7 @@ namespace FutureNNAimbot
         {
             if (IsKeyToggled(Keys.PageUp))
             {
-                selectedObject = (selectedObject + 1) % nn.TrainingNames.Count();
+                s.selectedObject = (s.selectedObject + 1) % nn.TrainingNames.Count();
             }
 
             if (IsKeyToggled(Keys.Up))
@@ -174,7 +173,7 @@ namespace FutureNNAimbot
 
             if (IsKeyToggled(Keys.PageDown))
             {
-                selectedObject = (selectedObject - 1 + nn.TrainingNames.Count()) % nn.TrainingNames.Count();
+                s.selectedObject = (s.selectedObject - 1 + nn.TrainingNames.Count()) % nn.TrainingNames.Count();
             }
 
         }

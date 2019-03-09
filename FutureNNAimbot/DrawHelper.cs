@@ -16,7 +16,7 @@ namespace FutureNNAimbot
         }
 
 
-        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, String selcected)
+        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
             mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
             mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
@@ -35,7 +35,7 @@ namespace FutureNNAimbot
 
             foreach (var item in items)
             {
-                DrawItem(item, selcected);
+                DrawItem(item, selectedObject);
             }
 
             mainWnd.graphics.EndScene();

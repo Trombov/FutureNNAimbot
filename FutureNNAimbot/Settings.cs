@@ -37,6 +37,9 @@ namespace FutureNNAimbot
         [DataMember]
         public bool DrawText { get; set; }
 
+        //Temporary not saved Settings
+        public int selectedObject = 0;
+        public bool trainingMode = false;
 
         static public Settings ReadSettings()
         {
