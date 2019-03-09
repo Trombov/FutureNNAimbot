@@ -26,7 +26,7 @@ namespace FutureNNAimbot
 
             if (File.Exists($"trainfiles/{Game}.cfg") && File.Exists($"trainfiles/{Game}.weights") && File.Exists($"trainfiles/{Game}.names"))
             {
-                var yoloWrapper = new Alturos.Yolo.YoloWrapper($"trainfiles/{Game}.cfg", $"trainfiles/{Game}.weights", $"trainfiles/{Game}.names");
+                var yoloWrapper = new YoloWrapper($"trainfiles/{Game}.cfg", $"trainfiles/{Game}.weights", $"trainfiles/{Game}.names");
                 Console.Clear();
                 if (yoloWrapper.EnvironmentReport.CudaExists == false)
                 {
@@ -55,9 +55,11 @@ namespace FutureNNAimbot
 
         static public NeuralNet Create(string Game)
         {
-            var nn = new NeuralNet();
-            nn.TrainingNames = null;
-            nn.yoloWrapper = GetYolo(Game);
+            var nn = new NeuralNet
+            {
+                TrainingNames = null,
+                yoloWrapper = GetYolo(Game)
+            };
 
             if (nn.yoloWrapper == null)
                 return null;
@@ -84,7 +86,7 @@ namespace FutureNNAimbot
         }
 
 
-        public IEnumerable<Alturos.Yolo.Model.YoloItem> getItems(System.Drawing.Image img, double confidence = (double)0.4)
+        public IEnumerable<Alturos.Yolo.Model.YoloItem> GetItems(System.Drawing.Image img, double confidence = 0.4)
         {
             using (MemoryStream ms = new MemoryStream())
             {

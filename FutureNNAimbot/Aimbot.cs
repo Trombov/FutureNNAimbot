@@ -1,12 +1,8 @@
 ﻿using GameOverlay.Drawing;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FutureNNAimbot
@@ -17,10 +13,10 @@ namespace FutureNNAimbot
         private NeuralNet nn;
         private Settings s;
         private DrawHelper dh;
+        int selectedObject = 0;
         private int shooting = 0;
         private System.Drawing.Point coordinates;
-
-        bool Enabled = true;
+        private bool Enabled = true;
 
         public Aimbot(Settings settings, GameProcess gameProcess, NeuralNet neuralNet)
         {
@@ -28,7 +24,6 @@ namespace FutureNNAimbot
             nn = neuralNet;
             s = settings;
             dh = new DrawHelper(settings);
-
         }
 
         public void Start()
@@ -54,10 +49,10 @@ namespace FutureNNAimbot
                 {
                     coordinates = Cursor.Position;
                     var bitmap = gc.ScreenCapture(true, coordinates);
-                    var items = nn.getItems(bitmap);
+                    var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, "", s, items,Firemode);
+                    dh.DrawPlaying(coordinates, nn.TrainingNames?[selectedObject], s, items,Firemode);
 
                 }
                 else
@@ -94,7 +89,9 @@ namespace FutureNNAimbot
         {
             if (s.Head)
             {
-                Alturos.Yolo.Model.YoloItem nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2)).FirstOrDefault();
+                Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == nn.TrainingNames[selectedObject])
+                    .OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2))
+                    .FirstOrDefault();
 
                 Rectangle nearestEnemyHead = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
 
@@ -126,7 +123,9 @@ namespace FutureNNAimbot
             else // aim 2 body
             {
 
-                Alturos.Yolo.Model.YoloItem nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).First();
+                var nearestEnemy = items.Where(x => x.Type == nn.TrainingNames[selectedObject])
+                    .OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f / 2), x.Y + (x.Height / 6) + (x.Height / 3) / 2))
+                    .First();
 
                 Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
                 if (s.SmoothAim <= 0)
@@ -157,40 +156,41 @@ namespace FutureNNAimbot
 
         void ReadKeys()
         {
-            if (User32.GetAsyncKeyState(Keys.F7) == -32767)
+            if (isKeyToggled(Keys.PageUp))
             {
-                Enabled = !Enabled;
-                Console.Beep();
+                selectedObject = (selectedObject + 1) % nn.TrainingNames.Count();
             }
 
-            if (User32.GetAsyncKeyState(Keys.Up) == -32767)
+            if (isKeyToggled(Keys.Up))
             {
-                s.SmoothAim = s.SmoothAim >= 1 ? s.SmoothAim : s.SmoothAim + 0.05f;
+                s.SmoothAim = Math.Min(s.SmoothAim + 0.05f, 1);
             }
 
-            if (User32.GetAsyncKeyState(Keys.Down) == -32767)
+            if (isKeyToggled(Keys.Down))
             {
-                s.SmoothAim = s.SmoothAim <= 0 ? s.SmoothAim : s.SmoothAim - 0.05f;
+                s.SmoothAim = Math.Max(s.SmoothAim - 0.05f, 0);
             }
 
-            if (User32.GetAsyncKeyState(Keys.Delete) == -32767)
+            if (isKeyToggled(Keys.Delete))
             {
-                s.Head = s.Head == true ? false : true;
+                s.Head = !s.Head;
             }
 
-            if (User32.GetAsyncKeyState(Keys.Home) == -32767)
+            if (isKeyToggled(Keys.Home))
             {
-                s.SimpleRCS = s.SimpleRCS == true ? false : true;
+                shooting = 0;
+                s.SimpleRCS = !s.SimpleRCS;
             }
 
-            //if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
+            //if (isKeyToggled(Keys.End))
             //{
-            //    selectedObject = selectedObject + 1 == TrainingNames.Count() ? 0 : selectedObject + 1;
+            //    s.AutoShoot = !s.AutoShoot;
             //}
-            //if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
-            //{
-            //    selectedObject = selectedObject == 0 ? TrainingNames.Count() - 1 : selectedObject - 1;
-            //}
+
+            if (isKeyToggled(Keys.PageDown))
+            {
+                selectedObject = (selectedObject - 1 + nn.TrainingNames.Count()) % nn.TrainingNames.Count();
+            }
 
         }
 
@@ -202,7 +202,15 @@ namespace FutureNNAimbot
             return Hypotenuse;
         }
 
+        static bool isKeyPressed(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) != 0;
+        }
 
+        static bool isKeyToggled(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) == -32767;
+        }
 
 
 
