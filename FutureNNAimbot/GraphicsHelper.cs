@@ -1,9 +1,4 @@
 ﻿using GameOverlay.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
@@ -57,7 +52,6 @@ namespace FutureNNAimbot
         {
             return graphics.CreateSolidBrush(c);
         }
-
 
     }
 

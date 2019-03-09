@@ -1,9 +1,6 @@
 ﻿using GameOverlay.Drawing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
@@ -17,7 +14,6 @@ namespace FutureNNAimbot
             s = settings;
             mainWnd = new GraphicWindow(settings.SizeX, settings.SizeY);
         }
-
 
 
         public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
