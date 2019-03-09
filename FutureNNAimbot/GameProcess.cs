@@ -20,7 +20,7 @@ namespace FutureNNAimbot
         public static  GameProcess Create(Settings settings)
         {
             var gp = new GameProcess(settings);
-            while (gp.isRunning() == false)
+            while (gp.IsRunning() == false)
             {
                 Console.Clear();
                 MessageBox.Show($"You have not launched {gp.s.Game}...");
@@ -31,7 +31,7 @@ namespace FutureNNAimbot
             return gp;
         }
         
-        public bool isRunning()
+        public bool IsRunning()
         {
             return Process.GetProcessesByName(s.Game).FirstOrDefault() != null;
         }

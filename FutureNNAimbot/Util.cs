@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using static System.Windows.Forms.Control;
 
 namespace FutureNNAimbot
 {
@@ -20,6 +21,7 @@ namespace FutureNNAimbot
         private const int MOUSEEVENTF_MIDDLEDOWN = 0x0020;
         private const int MOUSEEVENTF_MIDDLEUP = 0x0040;
         private const int MOUSEEVENTF_ABSOLUTE = 0x8000;
+
         public static void Move(int xDelta, int yDelta)
         {
             mouse_event(MOUSEEVENTF_MOVE, xDelta, yDelta, 0, 0);
@@ -30,34 +32,35 @@ namespace FutureNNAimbot
         }
         public static void LeftClick()
         {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
+            
+            mouse_event(MOUSEEVENTF_LEFTDOWN, MousePosition.X, MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTUP, MousePosition.X, MousePosition.Y, 0, 0);
         }
 
         public static void LeftDown()
         {
-            mouse_event(MOUSEEVENTF_LEFTDOWN, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTDOWN, MousePosition.X, MousePosition.Y, 0, 0);
         }
 
         public static void LeftUp()
         {
-            mouse_event(MOUSEEVENTF_LEFTUP, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_LEFTUP, MousePosition.X, MousePosition.Y, 0, 0);
         }
 
         public static void RightClick()
         {
-            mouse_event(MOUSEEVENTF_RIGHTDOWN, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
-            mouse_event(MOUSEEVENTF_RIGHTUP, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_RIGHTDOWN, MousePosition.X, MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_RIGHTUP, MousePosition.X, MousePosition.Y, 0, 0);
         }
 
         public static void RightDown()
         {
-            mouse_event(MOUSEEVENTF_RIGHTDOWN, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_RIGHTDOWN, MousePosition.X, MousePosition.Y, 0, 0);
         }
 
         public static void RightUp()
         {
-            mouse_event(MOUSEEVENTF_RIGHTUP, System.Windows.Forms.Control.MousePosition.X, System.Windows.Forms.Control.MousePosition.Y, 0, 0);
+            mouse_event(MOUSEEVENTF_RIGHTUP, MousePosition.X, MousePosition.Y, 0, 0);
         }
     }
 }
