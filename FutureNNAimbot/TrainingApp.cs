@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
@@ -35,6 +29,24 @@ namespace FutureNNAimbot
 
         public void startTrainingMode()
         {
+            var Game = gp;
+            File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{Game}_trainmore.cmd", true);
+            if (File.Exists($"trainfiles/{Game}.cfg"))
+                File.Copy($"trainfiles/{Game}.cfg", $"darknet/{Game}.cfg", true);
+            else
+                File.Copy("defaultfiles/default.cfg", $"darknet/{Game}.cfg", true);
+
+            File.Copy("defaultfiles/default.conv.15", $"darknet/{Game}.conv.15", true);
+            File.Copy("defaultfiles/default.data", $"darknet/data/{Game}.data", true);
+
+            if (File.Exists($"trainfiles/{Game}.names"))
+                File.Copy($"trainfiles/{Game}.names", $"darknet/{Game}.names", true);
+            else
+                File.Copy("defaultfiles/default.names", $"darknet/data/{Game}.names", true);
+
+            File.Copy("defaultfiles/default.txt", $"darknet/data/{Game}.txt", true);
+            File.Copy("defaultfiles/default.cmd", $"darknet/{Game}.cmd", true);
+
             Console.Write("How many objects will the NN be analyzing and training on? Write each object's name via the separator ',' without spaces (EX: 1,2): ");
             nn.TrainingNames = Console.ReadLine().Split(',');
         }

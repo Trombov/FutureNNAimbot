@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace FutureNNAimbot
+﻿namespace FutureNNAimbot
 {
-   public  class MainApp
+    public  class MainApp
     {
 
         private Settings settings;
@@ -29,10 +22,6 @@ namespace FutureNNAimbot
             var ab = new Aimbot(settings, gp, nNet);
             ab.Start();
         }
-
-
-
-
-
+        
     }
 }

@@ -1,29 +1,21 @@
 ﻿using GameOverlay.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
     public class GraphicsEx : Graphics
     {
-
-
-       
         public static string DefaultFontstr { get; set; } = "Arial";
         public static int DefaultFontSize { get; set; } = 12;
 
         public static readonly Point StartPoint = new Point(0, 0);
 
         Font DefaultFont;
-        public SolidBrush acb;
-        public SolidBrush tfb;
-        public SolidBrush csb;
-        public SolidBrush csfmb;
-        public SolidBrush hcb;
-        public SolidBrush bcb;
+        public SolidBrush acb; //Area Color
+        public SolidBrush tfb; //Text Color
+        public SolidBrush csb; //Blue brush
+        public SolidBrush csfmb; //Red brush
+        public SolidBrush hcb; //Head Color
+        public SolidBrush bcb; //Body Color
 
 
         public void Setup(Settings s)
@@ -36,12 +28,12 @@ namespace FutureNNAimbot
             GameOverlay.Drawing.Color HeadColor = new GameOverlay.Drawing.Color(255, 0, 0, s.Transparency);
             
             DefaultFont = CreateFont(DefaultFontstr, DefaultFontSize);
-            acb = AreaColor.getSolidBrush(this);
-            tfb = TextColor.getSolidBrush(this);
+            acb = AreaColor.GetSolidBrush(this);
+            tfb = TextColor.GetSolidBrush(this);
             csb = CreateSolidBrush(Color.Blue);
             csfmb = CreateSolidBrush(Color.Red);
-            hcb = HeadColor.getSolidBrush(this);
-            bcb = BodyColor.getSolidBrush(this);
+            hcb = HeadColor.GetSolidBrush(this);
+            bcb = BodyColor.GetSolidBrush(this);
         }
 
         public void WriteText(string text, Font f = null)
@@ -56,11 +48,10 @@ namespace FutureNNAimbot
 
     public static class ColorHelper
     {
-        public static SolidBrush getSolidBrush(this Color c, Graphics graphics)
+        public static SolidBrush GetSolidBrush(this Color c, Graphics graphics)
         {
             return graphics.CreateSolidBrush(c);
         }
-
 
     }
 

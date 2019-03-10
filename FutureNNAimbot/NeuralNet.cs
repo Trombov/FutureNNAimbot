@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FutureNNAimbot
@@ -28,7 +26,7 @@ namespace FutureNNAimbot
 
             if (File.Exists($"trainfiles/{Game}.cfg") && File.Exists($"trainfiles/{Game}.weights") && File.Exists($"trainfiles/{Game}.names"))
             {
-                var yoloWrapper = new Alturos.Yolo.YoloWrapper($"trainfiles/{Game}.cfg", $"trainfiles/{Game}.weights", $"trainfiles/{Game}.names");
+                var yoloWrapper = new YoloWrapper($"trainfiles/{Game}.cfg", $"trainfiles/{Game}.weights", $"trainfiles/{Game}.names");
                 Console.Clear();
                 if (yoloWrapper.EnvironmentReport.CudaExists == false)
                 {
@@ -57,36 +55,22 @@ namespace FutureNNAimbot
 
         static public NeuralNet Create(string Game)
         {
-            var nn = new NeuralNet();
-            nn.TrainingNames = null;
-            nn.yoloWrapper = GetYolo(Game);
+            var nn = new NeuralNet
+            {
+                TrainingNames = null,
+                yoloWrapper = GetYolo(Game)
+            };
 
             if (nn.yoloWrapper == null)
                 return null;
 
             nn.TrainingNames = File.ReadAllLines($"trainfiles/{Game}.names");
-            File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{Game}_trainmore.cmd", true);
-            if (File.Exists($"trainfiles/{Game}.cfg"))
-                File.Copy($"trainfiles/{Game}.cfg", $"darknet/{Game}.cfg", true);
-            else
-                File.Copy("defaultfiles/default.cfg", $"darknet/{Game}.cfg", true);
-
-            File.Copy("defaultfiles/default.conv.15", $"darknet/{Game}.conv.15", true);
-            File.Copy("defaultfiles/default.data", $"darknet/data/{Game}.data", true);
-
-            if (File.Exists($"trainfiles/{Game}.names"))
-                File.Copy($"trainfiles/{Game}.names", $"darknet/{Game}.names", true);
-            else
-                File.Copy("defaultfiles/default.names", $"darknet/data/{Game}.names", true);
-
-            File.Copy("defaultfiles/default.txt", $"darknet/data/{Game}.txt", true);
-            File.Copy("defaultfiles/default.cmd", $"darknet/{Game}.cmd", true);
-
+            
             return nn;
         }
 
 
-        public IEnumerable<Alturos.Yolo.Model.YoloItem> getItems(System.Drawing.Image img, double confidence = (double)0.4)
+        public IEnumerable<Alturos.Yolo.Model.YoloItem> GetItems(System.Drawing.Image img, double confidence = 0.4)
         {
             using (MemoryStream ms = new MemoryStream())
             {

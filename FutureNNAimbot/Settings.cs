@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FutureNNAimbot
@@ -35,6 +31,8 @@ namespace FutureNNAimbot
         [DataMember]
         public bool Head { get; set; }
         [DataMember]
+        public bool AutoShoot { get; set; }
+        [DataMember]
         public bool DrawAreaRectangle { get; set; }
         [DataMember]
         public bool DrawText { get; set; }
@@ -50,7 +48,7 @@ namespace FutureNNAimbot
             {
                 SizeX = 320,
                 SizeY = 320,
-                Game = "game",
+                Game = "processname",
                 SimpleRCS = true,
                 AimKey = Keys.MButton,
                 TrainModeKey = Keys.Insert,
@@ -59,15 +57,19 @@ namespace FutureNNAimbot
                 SmoothAim = 0.1f,
                 Information = true,
                 Head = false,
+                AutoShoot = false,
                 DrawAreaRectangle = true,
-                DrawText = true,
+                DrawText = true
                 Transparency = 255
+
             };
-            using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.OpenOrCreate))
+            using (var fs = new FileStream("config.json", System.IO.FileMode.OpenOrCreate))
             {
                 if (fs.Length == 0)
                 {
                     Settings.WriteObject(fs, new Settings[1] { auto_config });
+                    fs.Close();
+                    File.WriteAllText("config.json", File.ReadAllText("config.json").Replace(",", ",\n"));
                     MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                     return null;

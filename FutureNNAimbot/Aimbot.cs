@@ -1,12 +1,8 @@
 ﻿using GameOverlay.Drawing;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FutureNNAimbot
@@ -17,10 +13,11 @@ namespace FutureNNAimbot
         private NeuralNet nn;
         private Settings s;
         private DrawHelper dh;
+        int selectedObject = 0;
         private int shooting = 0;
         private System.Drawing.Point coordinates;
-
-        bool Enabled = true;
+        private bool Enabled = true;
+        private string[] objects = null;
 
         public Aimbot(Settings settings, GameProcess gameProcess, NeuralNet neuralNet)
         {
@@ -28,7 +25,7 @@ namespace FutureNNAimbot
             nn = neuralNet;
             s = settings;
             dh = new DrawHelper(settings);
-
+            objects = nn.TrainingNames;
         }
 
         public void Start()
@@ -40,24 +37,23 @@ namespace FutureNNAimbot
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                while (true)
+                while (Running)
                 {
                     ReadKeys();
-
                 }
             }).Start();
 
             while (Running)
             {
-
                 if (Enabled)
                 {
                     coordinates = Cursor.Position;
                     var bitmap = gc.ScreenCapture(true, coordinates);
-                    var items = nn.getItems(bitmap);
+                    var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, "", s, items);
+
+                    dh.DrawPlaying(coordinates, objects?[selectedObject], s, items, objects[selectedObject]);
 
                 }
                 else
@@ -68,10 +64,13 @@ namespace FutureNNAimbot
         }
 
 
+
+
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
             shooting = 0;
-            if (items.Count() > 0 && User32.GetAsyncKeyState(s.AimKey) != 0)
+  
+            if (items.Count() > 0 && IsKeyPressed(s.AimKey))
             {
                 Shooting(ref items);
             }
@@ -79,63 +78,52 @@ namespace FutureNNAimbot
 
         void Shooting(ref IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
+            Rectangle enemyRectangle = Rectangle.Create(0,0,0,0);
+            items = items.Where(x => x.Type == objects[selectedObject]);
+            if (items.Count() == 0)
+                return;
             if (s.Head)
             {
-                Alturos.Yolo.Model.YoloItem nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2)).FirstOrDefault();
-
-                Rectangle nearestEnemyHead = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
-
-                if (s.SmoothAim <= 0)
-                {
-                    VirtualMouse.Move(Convert.ToInt32(((nearestEnemyHead.Left - s.SizeX / 2) + (nearestEnemyHead.Width / 2))),
-                        Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 3 + 1 * shooting)));
-
-                    //VirtualMouse.Move(Convert.ToInt32(((nearestEnemyHead.Left - s.SizeX / 2) + (nearestEnemyHead.Width / 2))),
-                    //    Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 7 + 1 * shooting)));
-
-                    if (s.SimpleRCS) shooting += 2;
-                }
-                else//not smoothAim
-                {
-
-                    if (s.SizeX / 2 < nearestEnemyHead.Left | s.SizeX / 2 > nearestEnemyHead.Right
-                        | s.SizeY / 2 < nearestEnemyHead.Top | s.SizeY / 2 > nearestEnemyHead.Bottom)
-                    {
-                        VirtualMouse.Move(Convert.ToInt32(((nearestEnemyHead.Left - s.SizeX / 2) + (nearestEnemyHead.Width / 2)) * s.SmoothAim),
-                            Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 7 + 1 * shooting) * s.SmoothAim));
-                    }
-                    else
-                    {
-                        if (s.SimpleRCS) shooting += 2;
-                    }
-                }
+               var nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2))
+                    .First();
+                enemyRectangle = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), 
+                    nearestEnemy.Y, 
+                    Convert.ToInt32(nearestEnemy.Width / 3), 
+                    nearestEnemy.Height / 7 + (float)2 * shooting);
             }
             else // aim 2 body
             {
+                var nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f / 2), x.Y + (x.Height / 6) + (x.Height / 3) / 2))
+                    .First();
+                enemyRectangle = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), 
+                    nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting,
+                    Convert.ToInt32(nearestEnemy.Width / 1.5f), 
+                    nearestEnemy.Height / 3 + (float)2 * shooting);
+            }
 
-                Alturos.Yolo.Model.YoloItem nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).First();
+            if (s.SmoothAim <= 0)
+            {
+                VirtualMouse.Move(Convert.ToInt32(((enemyRectangle.Left - s.SizeX / 2) + (enemyRectangle.Width / 2))),
+                    Convert.ToInt32((enemyRectangle.Top - s.SizeY / 2 + enemyRectangle.Height / (s.Head?3:7) + 1 * shooting)));
 
-                Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
-                if (s.SmoothAim <= 0)
+                if (s.SimpleRCS) shooting += 2;
+            }
+            else
+            {
+                if (s.SizeX / 2 < enemyRectangle.Left | s.SizeX / 2 > enemyRectangle.Right
+                    | s.SizeY / 2 < enemyRectangle.Top | s.SizeY / 2 > enemyRectangle.Bottom)
                 {
-                    VirtualMouse.Move(Convert.ToInt32(((nearestEnemyBody.Left - s.SizeX / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - s.SizeY / 2 + nearestEnemyBody.Height / 7 + 1 * shooting)));
-
-                    if (s.SimpleRCS) shooting += 2;
+                    VirtualMouse.Move(Convert.ToInt32(((enemyRectangle.Left - s.SizeX / 2) + (enemyRectangle.Width / 2)) * s.SmoothAim), 
+                        Convert.ToInt32((enemyRectangle.Top - s.SizeY / 2 + enemyRectangle.Height / 7 + 1 * shooting) * s.SmoothAim));
                 }
                 else
                 {
-
-                    if (s.SizeX / 2 < nearestEnemyBody.Left | s.SizeX / 2 > nearestEnemyBody.Right
-                        | s.SizeY / 2 < nearestEnemyBody.Top | s.SizeY / 2 > nearestEnemyBody.Bottom)
-                    {
-                        VirtualMouse.Move(Convert.ToInt32(((nearestEnemyBody.Left - s.SizeX / 2) + (nearestEnemyBody.Width / 2)) * s.SmoothAim), Convert.ToInt32((nearestEnemyBody.Top - s.SizeY / 2 + nearestEnemyBody.Height / 7 + 1 * shooting) * s.SmoothAim));
-                    }
-                    else
-                    {
-                        if (s.SimpleRCS) shooting += 2;
-                    }
+                    if (s.SimpleRCS) shooting += 2;
                 }
             }
+
+            if (s.AutoShoot && !IsKeyPressed(Keys.LButton))
+                VirtualMouse.LeftClick();
 
             if (s.SimpleRCS)
                 VirtualMouse.Move(0, shooting);
@@ -144,40 +132,41 @@ namespace FutureNNAimbot
 
         void ReadKeys()
         {
-            if (User32.GetAsyncKeyState(Keys.F7) == -32767)
+            if (IsKeyToggled(Keys.PageUp))
             {
-                Enabled = !Enabled;
-                Console.Beep();
+                selectedObject = (selectedObject + 1) % nn.TrainingNames.Count();
             }
 
-            if (User32.GetAsyncKeyState(Keys.Up) == -32767)
+            if (IsKeyToggled(Keys.Up))
             {
-                s.SmoothAim = s.SmoothAim >= 1 ? s.SmoothAim : s.SmoothAim + 0.05f;
+                s.SmoothAim = Math.Min(s.SmoothAim + 0.05f, 1);
             }
 
-            if (User32.GetAsyncKeyState(Keys.Down) == -32767)
+            if (IsKeyToggled(Keys.Down))
             {
-                s.SmoothAim = s.SmoothAim <= 0 ? s.SmoothAim : s.SmoothAim - 0.05f;
+                s.SmoothAim = Math.Max(s.SmoothAim - 0.05f, 0);
             }
 
-            if (User32.GetAsyncKeyState(Keys.Delete) == -32767)
+            if (IsKeyToggled(Keys.Delete))
             {
-                s.Head = s.Head == true ? false : true;
+                s.Head = !s.Head;
             }
 
-            if (User32.GetAsyncKeyState(Keys.Home) == -32767)
+            if (IsKeyToggled(Keys.Home))
             {
-                s.SimpleRCS = s.SimpleRCS == true ? false : true;
+                shooting = 0;
+                s.SimpleRCS = !s.SimpleRCS;
             }
 
-            //if (User32.GetAsyncKeyState(Keys.PageUp) == -32767)
-            //{
-            //    selectedObject = selectedObject + 1 == TrainingNames.Count() ? 0 : selectedObject + 1;
-            //}
-            //if (User32.GetAsyncKeyState(Keys.PageDown) == -32767)
-            //{
-            //    selectedObject = selectedObject == 0 ? TrainingNames.Count() - 1 : selectedObject - 1;
-            //}
+            if (IsKeyToggled(Keys.End))
+            {
+                s.AutoShoot = !s.AutoShoot;
+            }
+
+            if (IsKeyToggled(Keys.PageDown))
+            {
+                selectedObject = (selectedObject - 1 + nn.TrainingNames.Count()) % nn.TrainingNames.Count();
+            }
 
         }
 
@@ -189,7 +178,15 @@ namespace FutureNNAimbot
             return Hypotenuse;
         }
 
+        static bool IsKeyPressed(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) != 0;
+        }
 
+        static bool IsKeyToggled(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) == -32767;
+        }
 
 
 

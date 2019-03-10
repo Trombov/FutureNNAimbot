@@ -1,9 +1,6 @@
 ﻿using GameOverlay.Drawing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
@@ -20,7 +17,8 @@ namespace FutureNNAimbot
 
 
 
-        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items)
+        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, String selcected)
+
         {
             mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
             mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
@@ -29,6 +27,7 @@ namespace FutureNNAimbot
 
             if (s.DrawAreaRectangle)
                 mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
+
 
             mainWnd.graphics.DrawCrosshair(mainWnd.graphics.csfmb,
                 s.SizeX / 2, s.SizeY / 2, 6, 2,CrosshairStyle.Gap);
@@ -39,21 +38,25 @@ namespace FutureNNAimbot
 
             foreach (var item in items)
             {
-                DrawItem(item);
+                DrawItem(item, selcected);
             }
 
             mainWnd.graphics.EndScene();
         }
 
-        private void DrawItem(Alturos.Yolo.Model.YoloItem item)
+        private void DrawItem(Alturos.Yolo.Model.YoloItem item, String selcected)
         {
             var shooting = 0;
 
             Rectangle head = Rectangle.Create(item.X + Convert.ToInt32(item.Width / 2.9), item.Y, Convert.ToInt32(item.Width / 3), item.Height / 7);
             Rectangle body = Rectangle.Create(item.X + Convert.ToInt32(item.Width / 6), item.Y + item.Height / 6, Convert.ToInt32(item.Width / 1.5f), item.Height / 3);
 
+            var clr = item.Type == selcected ? mainWnd.graphics.csfmb : mainWnd.graphics.csb;
 
-            mainWnd.graphics.DrawRectangle(mainWnd.graphics.hcb, Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
+            mainWnd.graphics.DrawRectangle(clr, Rectangle.Create(item.X, item.Y, item.Width, item.Height), 2);
+
+            if (item.Type != selcected)
+                return;
 
             if (s.Head)
             {

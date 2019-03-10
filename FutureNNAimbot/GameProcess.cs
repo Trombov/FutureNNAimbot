@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-   public class GameProcess
+    public class GameProcess
     {
        public Settings s;
 
@@ -23,24 +20,18 @@ namespace FutureNNAimbot
         public static  GameProcess Create(Settings settings)
         {
             var gp = new GameProcess(settings);
-            var p = Process.GetProcessesByName(settings.Game).FirstOrDefault();
-            if (p == null)
+            while (gp.IsRunning() == false)
             {
+                Console.Clear();
                 MessageBox.Show($"You have not launched {gp.s.Game}...");
-                //Process.GetCurrentProcess().Kill();
-                while (gp.isRunning() == false)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"Waiting for {gp.s.Game} to open. Press any key to retry!");
-                    Console.ReadLine();
-                }
+                Console.WriteLine($"Waiting for {gp.s.Game} to open. Press any key to retry!");
+                Console.ReadLine();
             }
+            
             return gp;
         }
-
         
-
-        public bool isRunning()
+        public bool IsRunning()
         {
             return Process.GetProcessesByName(s.Game).FirstOrDefault() != null;
         }
