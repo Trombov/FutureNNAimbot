@@ -9,10 +9,11 @@ namespace FutureNNAimbot
 {
     public class TrainingApp
     {
-        private bool screenshotMode;
+        private bool screenshotMode = true;
         private GameProcess gp;
         private gController gc;
         private NeuralNet nn;
+        private DrawHelper dh;
         Settings settings;
         public Rectangle trainBox;
 
@@ -20,12 +21,13 @@ namespace FutureNNAimbot
 
         public string[] TrainingNames { get; }
 
-        public TrainingApp(GameProcess gp, gController gc, NeuralNet nn)
+        public TrainingApp(GameProcess gp, gController gc, NeuralNet nn, DrawHelper dh)
         {
             this.gp = gp;
             this.nn = nn;
             this.gc = gc;
             this.settings = gp.s;
+            this.dh = dh;
             trainBox = new Rectangle(0, 0, settings.SizeX / 2, settings.SizeY / 2);
 
             trainBox.X = settings.SizeX / 2 - trainBox.Width / 2;
@@ -57,54 +59,58 @@ namespace FutureNNAimbot
             nn.TrainingNames = Console.ReadLine().Split(',');
         }
 
+        public void Run()
+        {
+            dh.DrawTraining(trainBox, TrainingNames[settings.selectedObject], screenshotMode);
+        }
 
         public void ReadInput()
         {
+            if (Util.IsKeyToggled(settings.ScreenshotModeKey))
+            {
+                screenshotMode = !screenshotMode;
+            }
+
+            if (Util.IsKeyPressed(Keys.Left))
+            {
+                if (trainBox.Width > 0)
+                {
+                    trainBox.Width -= 1;
+                    trainBox.X = settings.SizeX / 2 - trainBox.Width / 2;
+                }
+                
+            }
+
+            if (Util.IsKeyPressed(Keys.Down))
+            {
+                if (trainBox.Height < settings.SizeY)
+                {
+                    trainBox.Height += 1;
+                    trainBox.Y = settings.SizeY / 2 - trainBox.Height / 2;
+                }
+            }
+
+            if (Util.IsKeyPressed(Keys.Right))
+            {
+                if (trainBox.Width < settings.SizeX)
+                {
+                    trainBox.Width += 1;
+                    trainBox.X = settings.SizeX / 2 - trainBox.Width / 2;
+                }
+            }
+
+            if (Util.IsKeyPressed(Keys.Up))
+            {
+                if (trainBox.Height > 0)
+                {
+                    trainBox.Height -= 1;
+                    trainBox.Y = settings.SizeY / 2 - trainBox.Height / 2;
+                }
+            }
+            
             int rand = random.Next(5000, 999999);
-            if (User32.GetAsyncKeyState(settings.ScreenshotModeKey) == -32767)
-            {
-                screenshotMode = screenshotMode == true ? false : true;
-            }
-            if (User32.GetAsyncKeyState(Keys.Left) != 0)
-            {
-                if (trainBox.Width <= 0)
-                {
-                    return;
-                }
-                else trainBox.Width -= 1;
-            }
 
-            if (User32.GetAsyncKeyState(Keys.Down) != 0)
-            {
-                if (trainBox.Height >= settings.SizeY)
-                {
-                    return;
-                }
-                else trainBox.Height += 1;
-            }
-
-            if (User32.GetAsyncKeyState(Keys.Right) != 0)
-            {
-                if (trainBox.Width >= settings.SizeX)
-                {
-                    return;
-                }
-                else trainBox.Width += 1;
-            }
-
-            if (User32.GetAsyncKeyState(Keys.Up) != 0)
-            {
-                if (trainBox.Height <= 0)
-                {
-                    return;
-                }
-                else trainBox.Height -= 1;
-            }
-
-
-
-
-            if (User32.GetAsyncKeyState(settings.ScreenshotKey) == -32767)
+            if (Util.IsKeyToggled(settings.ScreenshotKey))
             {
                 float relative_center_x = (float)(trainBox.X + trainBox.Width / 2) / settings.SizeX;
                 float relative_center_y = (float)(trainBox.Y + trainBox.Height / 2) / settings.SizeY;
@@ -112,65 +118,72 @@ namespace FutureNNAimbot
                 float relative_height = (float)trainBox.Height / settings.SizeY;
                 
                 gc.saveCapture(true, $"darknet/data/img/{settings.Game}{rand}.png");
-                File.WriteAllText($"darknet/data/img/{settings.Game}{rand}.txt", string.Format("{0} {1} {2} {3} {4}", settings.selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
+                File.WriteAllText($"darknet/data/img/{settings.Game}{rand}.txt", string.Format("{0} {1} {2} {3} {4}", 
+                    settings.selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
 
-                Console.Beep();
+                //Console.Beep();
             }
-
-            if (User32.GetAsyncKeyState(Keys.Back) == -32767)
+            
+            if (Util.IsKeyToggled(Keys.Back))
             {
-
                 gc.saveCapture(true, $"darknet/data/img/{settings.Game}{rand}.png");
                 File.WriteAllText($"darknet/data/img/{settings.Game}{rand}.txt", "");
 
-                Console.Beep();
+                //Console.Beep();
             }
 
-            if (User32.GetAsyncKeyState(Keys.End) == -32767)
+            if (Util.IsKeyToggled(Keys.End))
             {
-                Console.WriteLine("Okay, we have the pictures for training. Let's train the Neural Network....");
-                File.WriteAllText($"darknet/{settings.Game}.cfg", File.ReadAllText($"darknet/{settings.Game}.cfg").Replace("NUMBER", nn.TrainingNames.Length.ToString()).Replace("FILTERNUM", ((nn.TrainingNames.Length + 5) * 3).ToString()));
-                File.WriteAllText($"darknet/{settings.Game}.cfg", File.ReadAllText($"darknet/{settings.Game}.cfg").Replace("batch=1", "batch=64").Replace("subdivisions=1", "subdivisions=8"));
-                File.WriteAllText($"darknet/data/{settings.Game}.data", File.ReadAllText($"darknet/data/{settings.Game}.data").Replace("NUMBER", nn.TrainingNames.Length.ToString()).Replace("GAME", settings.Game));
-                File.WriteAllText($"darknet/{settings.Game}.cmd", File.ReadAllText($"darknet/{settings.Game}.cmd").Replace("GAME", settings.Game));
-                File.WriteAllText($"darknet/{settings.Game}_trainmore.cmd", File.ReadAllText($"darknet/{settings.Game}_trainmore.cmd").Replace("GAME", settings.Game));
-                File.WriteAllText($"darknet/data/{settings.Game}.names", string.Join("\n", TrainingNames));
-                // DirectoryInfo d = ;//Assuming Test is your Folder
-                FileInfo[] Files = new DirectoryInfo(Application.StartupPath + @"\darknet\data\img").GetFiles($"{settings.Game}*.png"); //Getting Text files
-                string PathOfImg = "";
-                foreach (FileInfo file in Files)
+                try
                 {
-                    PathOfImg += $"data/img/{file.Name}\r\n";
-                }
-
-                File.WriteAllText($"darknet/data/{settings.Game}.txt", PathOfImg);
-
-                Process.GetProcessesByName(settings.Game)[0].Kill();
-                if (File.Exists($"trainfiles/{settings.Game}.weights"))
-                {
-                    File.Copy($"trainfiles/{settings.Game}.weights", $"darknet/{settings.Game}.weights", true);
-                    Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {settings.Game}_trainmore.cmd");
-                }
-                else Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {settings.Game}.cmd");
-
-                Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
-
-                while (true)
-                {
-                    if (Console.ReadLine() == "done")
+                    Console.WriteLine("Okay, we have the pictures for training. Let's train the Neural Network....");
+                    File.WriteAllText($"darknet/{settings.Game}.cfg", File.ReadAllText($"darknet/{settings.Game}.cfg").Replace("NUMBER", nn.TrainingNames.Length.ToString()).Replace("FILTERNUM", ((nn.TrainingNames.Length + 5) * 3).ToString()));
+                    File.WriteAllText($"darknet/{settings.Game}.cfg", File.ReadAllText($"darknet/{settings.Game}.cfg").Replace("batch=1", "batch=64").Replace("subdivisions=1", "subdivisions=8"));
+                    File.WriteAllText($"darknet/data/{settings.Game}.data", File.ReadAllText($"darknet/data/{settings.Game}.data").Replace("NUMBER", nn.TrainingNames.Length.ToString()).Replace("GAME", settings.Game));
+                    File.WriteAllText($"darknet/{settings.Game}.cmd", File.ReadAllText($"darknet/{settings.Game}.cmd").Replace("GAME", settings.Game));
+                    File.WriteAllText($"darknet/{settings.Game}_trainmore.cmd", File.ReadAllText($"darknet/{settings.Game}_trainmore.cmd").Replace("GAME", settings.Game));
+                    File.WriteAllText($"darknet/data/{settings.Game}.names", string.Join("\n", TrainingNames));
+                    // DirectoryInfo d = ;//Assuming Test is your Folder
+                    FileInfo[] Files = new DirectoryInfo(Application.StartupPath + @"\darknet\data\img").GetFiles($"{settings.Game}*.png"); //Getting Text files
+                    string PathOfImg = "";
+                    foreach (FileInfo file in Files)
                     {
-                        File.Copy($"darknet/data/backup/{settings.Game}_last.weights", $"trainfiles/{settings.Game}.weights", true);
-                        File.Copy($"darknet/data/{settings.Game}.names", $"trainfiles/{settings.Game}.names", true);
-                        File.Copy($"darknet/{settings.Game}.cfg", $"trainfiles/{settings.Game}.cfg", true);
-                        File.WriteAllText($"trainfiles/{settings.Game}.cfg", File.ReadAllText($"trainfiles/{settings.Game}.cfg").Replace("batch=64", "batch=1").Replace("subdivisions=8", "subdivisions=1"));
-                        nn.yoloWrapper = new YoloWrapper($"trainfiles/{settings.Game}.cfg", $"trainfiles/{settings.Game}.weights", $"trainfiles/{settings.Game}.names");
-                        nn.TrainingMode = false;
-                        break;
-
+                        PathOfImg += $"data/img/{file.Name}\r\n";
                     }
-                    else Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
+
+                    File.WriteAllText($"darknet/data/{settings.Game}.txt", PathOfImg);
+
+                    Process.GetProcessesByName(settings.Game)[0].Kill();
+                    if (File.Exists($"trainfiles/{settings.Game}.weights"))
+                    {
+                        File.Copy($"trainfiles/{settings.Game}.weights", $"darknet/{settings.Game}.weights", true);
+                        Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {settings.Game}_trainmore.cmd");
+                    }
+                    else Process.Start("cmd", @"/C cd " + Application.StartupPath + $"/darknet/ & {settings.Game}.cmd");
+
+                    Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
+
+                    while (true)
+                    {
+                        if (Console.ReadLine() == "done")
+                        {
+                            File.Copy($"darknet/data/backup/{settings.Game}_last.weights", $"trainfiles/{settings.Game}.weights", true);
+                            File.Copy($"darknet/data/{settings.Game}.names", $"trainfiles/{settings.Game}.names", true);
+                            File.Copy($"darknet/{settings.Game}.cfg", $"trainfiles/{settings.Game}.cfg", true);
+                            File.WriteAllText($"trainfiles/{settings.Game}.cfg", File.ReadAllText($"trainfiles/{settings.Game}.cfg").Replace("batch=64", "batch=1").Replace("subdivisions=8", "subdivisions=1"));
+                            nn.yoloWrapper = new YoloWrapper($"trainfiles/{settings.Game}.cfg", $"trainfiles/{settings.Game}.weights", $"trainfiles/{settings.Game}.names");
+                            nn.TrainingMode = false;
+                            break;
+
+                        }
+                        else Console.WriteLine("When you have finished training the NN, write \"done\" in this console.");
+                    }
+                    Console.WriteLine("Okay! Training has finished. Let's check detection in the game!");
                 }
-                Console.WriteLine("Okay! Training has finished. Let's check detection in the game!");
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error while training:" + e.ToString());
+                }
             }
         }
 

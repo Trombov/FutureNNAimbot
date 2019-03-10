@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace FutureNNAimbot
@@ -16,49 +15,33 @@ namespace FutureNNAimbot
         private DrawHelper dh;
         private int shooting = 0;
         private System.Drawing.Point coordinates;
-        private bool Enabled = true;
+        public bool Enabled = true;
         private string[] objects = null;
 
-        public Aimbot(Settings settings, GameProcess gameProcess, gController gc, NeuralNet neuralNet)
+        public Aimbot(Settings settings, GameProcess gameProcess, gController gc, NeuralNet neuralNet, DrawHelper dh)
         {
             this.gp = gameProcess;
             this.gc = gc;
             this.nn = neuralNet;
             this.s = settings;
-            this.dh = new DrawHelper(settings);
+            this.dh = dh;
             this.objects = nn.TrainingNames;
         }
 
-        public void Start()
+        public void Run()
         {
-            Console.WriteLine("running Aimbot :)");
-            var gc = new gController(s);
-            bool Running = true;
-
-            new Thread(() =>
+            if (Enabled)
             {
-                Thread.CurrentThread.IsBackground = true;
-                while (Running)
-                {
-                    ReadKeys();
-                }
-            }).Start();
+                coordinates = Cursor.Position;
+                var bitmap = gc.ScreenCapture(true, coordinates);
+                var items = nn.GetItems(bitmap);
+                RenderItems(items);
 
-            while (Running)
+                dh.DrawPlaying(coordinates, objects?[s.selectedObject], s, items);
+            }
+            else
             {
-                if (Enabled)
-                {
-                    coordinates = Cursor.Position;
-                    var bitmap = gc.ScreenCapture(true, coordinates);
-                    var items = nn.GetItems(bitmap);
-                    RenderItems(items);
-
-                    dh.DrawPlaying(coordinates, objects?[s.selectedObject], s, items);
-                }
-                else
-                {
-                    dh.DrawDisabled();
-                }
+                dh.DrawDisabled();
             }
         }
         
@@ -78,7 +61,7 @@ namespace FutureNNAimbot
             //    lastTick = DateTime.Now.Ticks;
             //}
 
-            if (items.Count() > 0 && IsKeyPressed(s.AimKey))
+            if (items.Count() > 0 && Util.IsKeyPressed(s.AimKey))
             {
                 Shooting(ref items);
             }
@@ -130,7 +113,7 @@ namespace FutureNNAimbot
                 }
             }
 
-            if (s.AutoShoot && !IsKeyPressed(Keys.LButton))
+            if (s.AutoShoot && !Util.IsKeyPressed(Keys.LButton))
                 VirtualMouse.LeftClick();
 
             if (s.SimpleRCS)
@@ -138,40 +121,40 @@ namespace FutureNNAimbot
 
         }
 
-        void ReadKeys()
+        public void ReadKeys()
         {
-            if (IsKeyToggled(Keys.PageUp))
+            if (Util.IsKeyToggled(Keys.PageUp))
             {
                 s.selectedObject = (s.selectedObject + 1) % nn.TrainingNames.Count();
             }
 
-            if (IsKeyToggled(Keys.Up))
+            if (Util.IsKeyToggled(Keys.Up))
             {
                 s.SmoothAim = Math.Min(s.SmoothAim + 0.05f, 1);
             }
 
-            if (IsKeyToggled(Keys.Down))
+            if (Util.IsKeyToggled(Keys.Down))
             {
                 s.SmoothAim = Math.Max(s.SmoothAim - 0.05f, 0);
             }
 
-            if (IsKeyToggled(Keys.Delete))
+            if (Util.IsKeyToggled(Keys.Delete))
             {
                 s.Head = !s.Head;
             }
 
-            if (IsKeyToggled(Keys.Home))
+            if (Util.IsKeyToggled(Keys.Home))
             {
                 shooting = 0;
                 s.SimpleRCS = !s.SimpleRCS;
             }
 
-            if (IsKeyToggled(Keys.End))
+            if (Util.IsKeyToggled(Keys.End))
             {
                 s.AutoShoot = !s.AutoShoot;
             }
 
-            if (IsKeyToggled(Keys.PageDown))
+            if (Util.IsKeyToggled(Keys.PageDown))
             {
                 s.selectedObject = (s.selectedObject - 1 + nn.TrainingNames.Count()) % nn.TrainingNames.Count();
             }
@@ -182,21 +165,8 @@ namespace FutureNNAimbot
         {
             float ydist = (Y - s.SizeY / 2);
             float xdist = (X - s.SizeX / 2);
-            float Hypotenuse = (float)Math.Sqrt(Math.Pow(ydist, 2) + Math.Pow(xdist, 2));
-            return Hypotenuse;
+            return (float)Math.Sqrt(Math.Pow(ydist, 2) + Math.Pow(xdist, 2));
         }
-
-        static bool IsKeyPressed(Keys key)
-        {
-            return User32.GetAsyncKeyState(key) != 0;
-        }
-
-        static bool IsKeyToggled(Keys key)
-        {
-            return User32.GetAsyncKeyState(key) == -32767;
-        }
-
-
-
+        
     }
 }

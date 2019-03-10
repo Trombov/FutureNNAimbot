@@ -1,12 +1,20 @@
 ﻿using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using static System.Windows.Forms.Control;
 
 namespace FutureNNAimbot
 {
     public static class Util
     {
+        public static bool IsKeyPressed(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) != 0;
+        }
 
-        
+        public static bool IsKeyToggled(Keys key)
+        {
+            return User32.GetAsyncKeyState(key) == -32767;
+        }
     }
 
     public static class VirtualMouse
@@ -63,4 +71,5 @@ namespace FutureNNAimbot
             mouse_event(MOUSEEVENTF_RIGHTUP, MousePosition.X, MousePosition.Y, 0, 0);
         }
     }
+
 }

@@ -114,7 +114,7 @@ namespace FutureNNAimbot
 
         public void saveCapture(bool screenshotmode, string path)
         {
-            ScreenCapture(screenshotmode, System.Windows.Forms.Cursor.Position).Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            ScreenCapture(screenshotmode, Cursor.Position).Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         public void Dispose()

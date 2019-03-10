@@ -41,7 +41,7 @@ namespace FutureNNAimbot
             mainWnd.graphics.EndScene();
         }
 
-        private void DrawItem(Alturos.Yolo.Model.YoloItem item, String selcected)
+        private void DrawItem(Alturos.Yolo.Model.YoloItem item, string selcected)
         {
             var shooting = 0;
 
@@ -83,7 +83,14 @@ namespace FutureNNAimbot
 
         public void DrawTraining(System.Drawing.Rectangle trainBox, string selectedObject, bool screenshotMode)
         {
-            mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
+            mainWnd.graphics.BeginScene();
+            mainWnd.graphics.ClearScene();
+
+            if (s.DrawAreaRectangle)
+                mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
+
+            mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine 
+                + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
