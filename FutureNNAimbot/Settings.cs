@@ -21,7 +21,7 @@ namespace FutureNNAimbot
         [DataMember]
         public bool SimpleRCS { get; set; }
         [DataMember]
-        public Keys ShootKey { get; set; }
+        public Keys AimKey { get; set; }
         [DataMember]
         public Keys TrainModeKey { get; set; }
         [DataMember]
@@ -38,8 +38,9 @@ namespace FutureNNAimbot
         public bool DrawAreaRectangle { get; set; }
         [DataMember]
         public bool DrawText { get; set; }
-
-
+        [DataMember]
+        public int Transparency { get; set; }
+        
         static public Settings ReadSettings()
         {
             // Read settings
@@ -51,13 +52,16 @@ namespace FutureNNAimbot
                 SizeY = 320,
                 Game = "game",
                 SimpleRCS = true,
-                ShootKey = Keys.MButton,
+                AimKey = Keys.MButton,
                 TrainModeKey = Keys.Insert,
                 ScreenshotKey = Keys.Home,
                 ScreenshotModeKey = Keys.NumPad9,
                 SmoothAim = 0.1f,
                 Information = true,
-                Head = false
+                Head = false,
+                DrawAreaRectangle = true,
+                DrawText = true,
+                Transparency = 255
             };
             using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.OpenOrCreate))
             {

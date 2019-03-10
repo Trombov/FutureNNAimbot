@@ -9,13 +9,11 @@ namespace FutureNNAimbot
 {
     public class GraphicsEx : Graphics
     {
-        public static GameOverlay.Drawing.Color AreaColor { get; set; } = new GameOverlay.Drawing.Color(0, 255, 0, 10);
-        public static GameOverlay.Drawing.Color TextColor { get; set; } = new GameOverlay.Drawing.Color(120, 255, 255, 255);
-        public static GameOverlay.Drawing.Color BodyColor { get; set; } = new GameOverlay.Drawing.Color(0, 255, 0, 80);
-        public static GameOverlay.Drawing.Color HeadColor { get; set; } = new GameOverlay.Drawing.Color(255, 0, 0, 80);
 
+
+       
         public static string DefaultFontstr { get; set; } = "Arial";
-        public static int DefaultFontSize { get; set; } = 10;
+        public static int DefaultFontSize { get; set; } = 12;
 
         public static readonly Point StartPoint = new Point(0, 0);
 
@@ -27,11 +25,16 @@ namespace FutureNNAimbot
         public SolidBrush hcb;
         public SolidBrush bcb;
 
-        
-        new public void  Setup()
+
+        public void Setup(Settings s)
         {
             base.Setup();
 
+            GameOverlay.Drawing.Color AreaColor = new GameOverlay.Drawing.Color(0, 255, 0, s.Transparency);
+            GameOverlay.Drawing.Color TextColor = new GameOverlay.Drawing.Color(120, 255, 255, s.Transparency);
+            GameOverlay.Drawing.Color BodyColor = new GameOverlay.Drawing.Color(0, 255, 0, s.Transparency);
+            GameOverlay.Drawing.Color HeadColor = new GameOverlay.Drawing.Color(255, 0, 0, s.Transparency);
+            
             DefaultFont = CreateFont(DefaultFontstr, DefaultFontSize);
             acb = AreaColor.getSolidBrush(this);
             tfb = TextColor.getSolidBrush(this);
