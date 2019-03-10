@@ -45,23 +45,11 @@ namespace FutureNNAimbot
             }
         }
         
-        //static bool lastMDwnState = false;
-        //static bool Firemode = false;
-        //static long lastTick = DateTime.Now.Ticks;
-
 
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
             shooting = 0;
-
-            //var isMdwn = IsKeyPressed(Keys.LButton) || s.AutoShoot & IsKeyPressed(s.AimKey); // isKeyPressed(s.TriggerBotKey);
-            //if (isMdwn || DateTime.Now.Ticks > lastTick + 20000000)
-            //{               
-            //    Firemode = isMdwn  || lastMDwnState;
-            //    lastMDwnState = isMdwn;
-            //    lastTick = DateTime.Now.Ticks;
-            //}
-
+            
             if (items.Count() > 0 && Util.IsKeyPressed(s.AimKey))
             {
                 Shooting(ref items);
@@ -124,10 +112,6 @@ namespace FutureNNAimbot
 
         public void ReadKeys()
         {
-            if (Util.IsKeyToggled(Keys.PageUp))
-            {
-                s.selectedObject = (s.selectedObject + 1) % nn.TrainingNames.Count();
-            }
 
             if (Util.IsKeyToggled(Keys.Up))
             {
@@ -153,11 +137,6 @@ namespace FutureNNAimbot
             if (Util.IsKeyToggled(Keys.End))
             {
                 s.AutoShoot = !s.AutoShoot;
-            }
-
-            if (Util.IsKeyToggled(Keys.PageDown))
-            {
-                s.selectedObject = (s.selectedObject - 1 + nn.TrainingNames.Count()) % nn.TrainingNames.Count();
             }
 
         }

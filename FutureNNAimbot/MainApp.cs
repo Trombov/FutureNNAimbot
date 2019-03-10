@@ -38,7 +38,18 @@ namespace FutureNNAimbot
                         ab.Enabled = b;
                     }
 
-                    if(b)
+                    if (Util.IsKeyToggled(System.Windows.Forms.Keys.PageUp))
+                    {
+                        settings.selectedObject = (settings.selectedObject + 1) % nNet.TrainingNames.Length;
+                    }
+
+                    if (Util.IsKeyToggled(System.Windows.Forms.Keys.PageDown))
+                    {
+                        settings.selectedObject = (settings.selectedObject - 1 + nNet.TrainingNames.Length) % nNet.TrainingNames.Length;
+                    }
+
+
+                    if (b)
                         ab.ReadKeys();
                     else
                         ta.ReadInput();

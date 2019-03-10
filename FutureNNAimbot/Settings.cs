@@ -64,7 +64,7 @@ namespace FutureNNAimbot
                 Head = false,
                 AutoShoot = false,
                 DrawAreaRectangle = true,
-                DrawText = true
+                DrawText = true,
                 Transparency = 255
 
             };
