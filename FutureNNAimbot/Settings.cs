@@ -36,6 +36,11 @@ namespace FutureNNAimbot
         public bool DrawAreaRectangle { get; set; }
         [DataMember]
         public bool DrawText { get; set; }
+        
+        //Temporary not saved Settings
+        public int selectedObject = 0;
+        public bool trainingMode = false;
+        
         [DataMember]
         public int Transparency { get; set; }
         
@@ -59,7 +64,7 @@ namespace FutureNNAimbot
                 Head = false,
                 AutoShoot = false,
                 DrawAreaRectangle = true,
-                DrawText = true
+                DrawText = true,
                 Transparency = 255
 
             };

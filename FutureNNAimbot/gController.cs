@@ -24,7 +24,7 @@ namespace FutureNNAimbot
         {
             width = s.SizeX;
             height = s.SizeY;
-            phnd = System.Diagnostics.Process.GetProcessesByName(s.Game).FirstOrDefault().MainWindowHandle;
+            phnd = Process.GetProcessesByName(s.Game).FirstOrDefault().MainWindowHandle;
             ////set screencapture handles
             hdcSrc = User32.GetWindowDC(phnd);
             windowRect = new User32.RECT();
@@ -114,7 +114,7 @@ namespace FutureNNAimbot
 
         public void saveCapture(bool screenshotmode, string path)
         {
-            ScreenCapture(screenshotmode, System.Windows.Forms.Cursor.Position).Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            ScreenCapture(screenshotmode, Cursor.Position).Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         public void Dispose()
