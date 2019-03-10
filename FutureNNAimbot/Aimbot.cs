@@ -52,6 +52,7 @@ namespace FutureNNAimbot
                     var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
+
                     dh.DrawPlaying(coordinates, objects?[selectedObject], s, items, objects[selectedObject]);
 
                 }
@@ -63,22 +64,12 @@ namespace FutureNNAimbot
         }
 
 
-        //static bool lastMDwnState = false;
-        //static bool Firemode = false;
-        //static long lastTick = DateTime.Now.Ticks;
+
 
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
             shooting = 0;
-
-            //var isMdwn = IsKeyPressed(Keys.LButton) || s.AutoShoot & IsKeyPressed(s.AimKey); // isKeyPressed(s.TriggerBotKey);
-            //if (isMdwn || DateTime.Now.Ticks > lastTick + 20000000)
-            //{               
-            //    Firemode = isMdwn  || lastMDwnState;
-            //    lastMDwnState = isMdwn;
-            //    lastTick = DateTime.Now.Ticks;
-            //}
-
+  
             if (items.Count() > 0 && IsKeyPressed(s.AimKey))
             {
                 Shooting(ref items);

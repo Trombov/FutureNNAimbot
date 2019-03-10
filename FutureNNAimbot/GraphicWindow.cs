@@ -9,7 +9,7 @@ namespace FutureNNAimbot
 
 
 
-        public GraphicWindow(int w, int h)
+        public GraphicWindow(int w, int h, Settings s)
         {
             window = new OverlayWindow(0, 0, w, h)
             {
@@ -29,7 +29,7 @@ namespace FutureNNAimbot
                 Width = window.Width,
                 WindowHandle = window.Handle
             };
-            graphics.Setup();
+            graphics.Setup(s);
         }
 
     }
