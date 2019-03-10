@@ -36,11 +36,14 @@ namespace FutureNNAimbot
         public bool DrawAreaRectangle { get; set; }
         [DataMember]
         public bool DrawText { get; set; }
-
+        
         //Temporary not saved Settings
         public int selectedObject = 0;
         public bool trainingMode = false;
-
+        
+        [DataMember]
+        public int Transparency { get; set; }
+        
         static public Settings ReadSettings()
         {
             // Read settings
@@ -62,6 +65,8 @@ namespace FutureNNAimbot
                 AutoShoot = false,
                 DrawAreaRectangle = true,
                 DrawText = true
+                Transparency = 255
+
             };
             using (var fs = new FileStream("config.json", System.IO.FileMode.OpenOrCreate))
             {

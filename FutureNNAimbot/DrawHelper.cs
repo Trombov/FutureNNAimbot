@@ -12,12 +12,12 @@ namespace FutureNNAimbot
         public DrawHelper(Settings settings)
         {
             s = settings;
-            mainWnd = new GraphicWindow(settings.SizeX, settings.SizeY);
+            mainWnd = new GraphicWindow(settings.SizeX, settings.SizeY, s);
         }
 
-
+        
         public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items)
-        {
+        { 
             mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
             mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
             mainWnd.graphics.BeginScene();
@@ -26,8 +26,9 @@ namespace FutureNNAimbot
             if (s.DrawAreaRectangle)
                 mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
 
-            mainWnd.graphics.FillRectangle(mainWnd.graphics.csb,
-                Rectangle.Create(s.SizeX / 2, s.SizeY / 2, 4, 4));
+
+            mainWnd.graphics.DrawCrosshair(mainWnd.graphics.csfmb,
+                s.SizeX / 2, s.SizeY / 2, 6, 2,CrosshairStyle.Gap);
 
             //draw main text
             if (s.DrawText)

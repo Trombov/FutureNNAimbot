@@ -4,13 +4,8 @@ namespace FutureNNAimbot
 {
     public class GraphicsEx : Graphics
     {
-        public static Color AreaColor { get; set; } = new Color(0, 255, 0, 10); //red
-        public static Color TextColor { get; set; } = new Color(120, 255, 255, 255);//turquoise
-        public static Color BodyColor { get; set; } = new Color(0, 255, 0, 80);
-        public static Color HeadColor { get; set; } = new Color(255, 0, 0, 80); // blueish
-
         public static string DefaultFontstr { get; set; } = "Arial";
-        public static int DefaultFontSize { get; set; } = 10;
+        public static int DefaultFontSize { get; set; } = 12;
 
         public static readonly Point StartPoint = new Point(0, 0);
 
@@ -22,11 +17,16 @@ namespace FutureNNAimbot
         public SolidBrush hcb; //Head Color
         public SolidBrush bcb; //Body Color
 
-        
-        new public void  Setup()
+
+        public void Setup(Settings s)
         {
             base.Setup();
 
+            GameOverlay.Drawing.Color AreaColor = new GameOverlay.Drawing.Color(0, 255, 0, s.Transparency);
+            GameOverlay.Drawing.Color TextColor = new GameOverlay.Drawing.Color(120, 255, 255, s.Transparency);
+            GameOverlay.Drawing.Color BodyColor = new GameOverlay.Drawing.Color(0, 255, 0, s.Transparency);
+            GameOverlay.Drawing.Color HeadColor = new GameOverlay.Drawing.Color(255, 0, 0, s.Transparency);
+            
             DefaultFont = CreateFont(DefaultFontstr, DefaultFontSize);
             acb = AreaColor.GetSolidBrush(this);
             tfb = TextColor.GetSolidBrush(this);
