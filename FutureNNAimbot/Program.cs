@@ -43,8 +43,10 @@ namespace FutureNNAimbot
         public bool Head { get; set; }
         [DataMember]
         public bool AutoShoot { get; set; }
+        [DataMember]
+        public Keys TriggerBotKey { get; set; }
 
-        public Settings(int SizeX, int SizeY, string Game, bool SimpleRCS, Keys AimKey, Keys TrainModeKey, Keys ScreenshotKey, Keys ScreenshotModeKey, float SmoothAim, bool Information, bool Head, bool AutoShoot)
+        public Settings(int SizeX, int SizeY, string Game, bool SimpleRCS, Keys AimKey, Keys TrainModeKey, Keys ScreenshotKey, Keys ScreenshotModeKey, float SmoothAim, bool Information, bool Head, bool AutoShoot, Keys TriggerBotKey)
         {
             this.SizeX = SizeX;
             this.SizeY = SizeY;
@@ -58,6 +60,7 @@ namespace FutureNNAimbot
             this.Information = Information;
             this.Head = Head;
             this.AutoShoot = AutoShoot;
+            this.TriggerBotKey = TriggerBotKey;
         }
     }
 
@@ -129,7 +132,7 @@ namespace FutureNNAimbot
             // Read settings
             DataContractJsonSerializer Settings = new DataContractJsonSerializer(typeof(Settings[]));
             Settings settings = null;
-            Settings auto_config = new Settings(320, 320, "game", true, Keys.MButton, Keys.Insert, Keys.Home, Keys.NumPad9, 0.1f, true, false, true);
+            Settings auto_config = new Settings(320, 320, "game", true, Keys.MButton, Keys.Insert, Keys.Home, Keys.NumPad9, 0.1f, true, false, true, Keys.XButton1);
             using (FileStream fs = new FileStream("config.json", FileMode.OpenOrCreate))
             {
                 if (fs.Length == 0)
@@ -158,6 +161,7 @@ namespace FutureNNAimbot
             bool Information = settings.Information;
             bool Head = settings.Head;
             bool AutoShoot = settings.AutoShoot;
+            Keys TriggerBotKey = settings.TriggerBotKey;
 
 
             System.Drawing.Point CenterScreen = new System.Drawing.Point(Screen.PrimaryScreen.Bounds.Width / 2, Screen.PrimaryScreen.Bounds.Height / 2);
@@ -451,6 +455,7 @@ namespace FutureNNAimbot
                         $"Head {Head};" +
                         $"SimpleRCS {SimpleRCS};" + Environment.NewLine +
                         $"AutoShoot {AutoShoot};" +
+                        $"TriggerBot {isKeyPressed(TriggerBotKey)};" +
                         $"CursorToCenter: {CursorToCenter}");
 
                     using (MemoryStream ms = new MemoryStream())
@@ -462,7 +467,6 @@ namespace FutureNNAimbot
 
                         if (items.Count() > 0)
                         {
-
                             foreach (var item in items)
                             {
                                 if (item.Confidence > 0.4d)
@@ -570,6 +574,43 @@ namespace FutureNNAimbot
                                                 }
                                             }
                                             //System.Threading.Thread.Sleep(120);
+                                        }
+                                        else if (isKeyPressed(TriggerBotKey))
+                                        {
+                                            if (Head)
+                                            {
+                                                Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 2.9) + (x.Width / 3) / 2, x.Y + (x.Height / 7) / 2)).Last();
+
+                                                Rectangle nearestEnemyHead = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 2.9), nearestEnemy.Y, Convert.ToInt32(nearestEnemy.Width / 3), nearestEnemy.Height / 7 + (float)2 * shooting);
+
+                                                if (!(size.X / 2 < nearestEnemyHead.Left | size.X / 2 > nearestEnemyHead.Right
+                                                      | size.Y / 2 < nearestEnemyHead.Top | size.Y / 2 > nearestEnemyHead.Bottom))
+                                                {
+                                                    if (AutoShoot)
+                                                    {
+                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (SimpleRCS) shooting += 2;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Alturos.Yolo.Model.YoloItem nearestEnemy = items.Where(x => x.Type == objects[selectedObject]).OrderByDescending(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).Last();
+
+                                                Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 + (float)2 * shooting, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3 + (float)2 * shooting);
+
+                                                if (!(size.X / 2 < nearestEnemyBody.Left | size.X / 2 > nearestEnemyBody.Right
+                                                      | size.Y / 2 < nearestEnemyBody.Top | size.Y / 2 > nearestEnemyBody.Bottom))
+                                                {
+                                                    if (AutoShoot)
+                                                    {
+                                                        User32.mouse_event(0x02, 0, 0, 0, (UIntPtr)0);
+                                                        User32.mouse_event(0x04, 0, 0, 0, (UIntPtr)0);
+                                                        if (SimpleRCS) shooting += 2;
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                     else
