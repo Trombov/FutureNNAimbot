@@ -256,7 +256,10 @@ namespace FutureNNAimbot
             
             while (true)
             {
-                coordinates = Cursor.Position;
+				if (CursorToCenter)
+					coordinates = CenterScreen;
+				else
+					coordinates = Cursor.Position;
 
                 if (screenshotMode)
                 {
@@ -286,9 +289,6 @@ namespace FutureNNAimbot
                 gfx.ClearScene();
 
                 gfx.DrawRectangle(greenbrush, 0, 0, size.X, size.Y, 2);
-
-                if(CursorToCenter)
-                    Cursor.Position = CenterScreen;
 
                 if (isKeyToggled(Keys.NumPad0))
                 {
