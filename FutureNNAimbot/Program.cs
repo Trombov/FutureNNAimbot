@@ -256,10 +256,7 @@ namespace FutureNNAimbot
             
             while (true)
             {
-				if (CursorToCenter)
-					coordinates = CenterScreen;
-				else
-					coordinates = Cursor.Position;
+		coordinates = CursorToCenter ? CenterScreen : Cursor.Position;
 
                 if (screenshotMode)
                 {
