@@ -10,7 +10,7 @@ namespace FutureNNAimbot
 {
     public class NeuralNet
     {
-        YoloWrapper yoloWrapper;
+        public YoloWrapper yoloWrapper;
 
         public string[] TrainingNames;
 

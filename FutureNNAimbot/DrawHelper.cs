@@ -15,11 +15,9 @@ namespace FutureNNAimbot
             mainWnd = new GraphicWindow(settings.SizeX, settings.SizeY, s);
         }
 
-
-
-        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, String selcected)
-
-        {
+        
+        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items)
+        { 
             mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
             mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
             mainWnd.graphics.BeginScene();
@@ -34,17 +32,23 @@ namespace FutureNNAimbot
 
             //draw main text
             if (s.DrawText)
-                mainWnd.graphics.WriteText($"Object {selectedObject}; SmoothAim {Math.Round(settings.SmoothAim, 2)}; Head {settings.Head}; SimpleRCS {settings.SimpleRCS}");
+                mainWnd.graphics.WriteText(
+                        $"Object {selectedObject};" +
+                        $"SmoothAim {Math.Round(settings.SmoothAim, 2)};" +
+                        $"Head {settings.Head};" +
+                        $"SimpleRCS {settings.SimpleRCS};" + Environment.NewLine +
+                        $"AutoShoot {settings.AutoShoot};" +
+                        $"CursorToCenter: {settings.CursorToCenter}");
 
             foreach (var item in items)
             {
-                DrawItem(item, selcected);
+                DrawItem(item, selectedObject);
             }
 
             mainWnd.graphics.EndScene();
         }
 
-        private void DrawItem(Alturos.Yolo.Model.YoloItem item, String selcected)
+        private void DrawItem(Alturos.Yolo.Model.YoloItem item, string selcected)
         {
             var shooting = 0;
 
@@ -84,9 +88,16 @@ namespace FutureNNAimbot
             mainWnd.graphics.EndScene();
         }
 
-        public void DrawTraining(System.Drawing.Rectangle trainBox, string selectedObject, bool screenshotMode)
+        public void DrawTraining(System.Drawing.Rectangle trainBox, Settings settings, string selectedObject, bool screenshotMode)
         {
-            mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
+            mainWnd.graphics.BeginScene();
+            mainWnd.graphics.ClearScene();
+
+            if (s.DrawAreaRectangle)
+                mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
+
+            mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine 
+                + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered")+ Environment.NewLine + $"CursorToCenter: {settings.CursorToCenter}");
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
