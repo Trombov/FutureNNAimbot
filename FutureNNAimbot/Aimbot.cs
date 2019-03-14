@@ -14,6 +14,7 @@ namespace FutureNNAimbot
         private Settings s;
         private DrawHelper dh;
         private int shooting = 0;
+        private System.Drawing.Point coordinates;
         public bool Enabled = true;
         private string[] objects = null;
 
@@ -31,11 +32,12 @@ namespace FutureNNAimbot
         {
             if (Enabled)
             {
-                var bitmap = gc.ScreenCapture(false, Cursor.Position);
+                coordinates = Cursor.Position;
+                var bitmap = gc.ScreenCapture(true, coordinates);
                 var items = nn.GetItems(bitmap);
                 RenderItems(items);
 
-                dh.DrawPlaying(Cursor.Position, objects?[s.selectedObject], s, items);
+                dh.DrawPlaying(coordinates, objects?[s.selectedObject], s, items);
             }
             else
             {
