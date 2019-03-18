@@ -11,21 +11,27 @@ namespace FutureNNAimbot
     {
         private Settings s;
         GraphicWindow mainWnd;
+        GraphicWindow textWnd;
 
         public DrawHelper(Settings settings)
         {
             s = settings;
             mainWnd = new GraphicWindow(settings.SizeX, settings.SizeY);
+            textWnd = new GraphicWindow(settings.SizeX, settings.SizeY);
         }
 
 
 
-        public void DrawPlaying(System.Drawing.Point curMousPos, string selectedObject, Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
+        public void DrawPlaying(System.Drawing.Point curMousPos,  Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
         {
             mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
             mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
+            textWnd.window.X = 0;
+            textWnd.window.Y = 0;
             mainWnd.graphics.BeginScene();
             mainWnd.graphics.ClearScene();
+            textWnd.graphics.BeginScene();
+            textWnd.graphics.ClearScene();
 
             if (s.DrawAreaRectangle)
                 mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
@@ -34,8 +40,10 @@ namespace FutureNNAimbot
                 Rectangle.Create(s.SizeX / 2, s.SizeY / 2, 4, 4));
 
             //draw main text
-            if (s.DrawText)
-                mainWnd.graphics.WriteText($"Object {selectedObject}; SmoothAim {Math.Round(settings.SmoothAim, 2)}; Head {settings.Head}; SimpleRCS {settings.SimpleRCS}");
+            if (s.DrawText) {
+                textWnd.graphics.WriteText($"SmoothAim {Math.Round(settings.SmoothAim, 2)}; Head {settings.Head}; SimpleRCS {settings.SimpleRCS}");
+            }
+                
 
             foreach (var item in items)
             {
@@ -43,6 +51,7 @@ namespace FutureNNAimbot
             }
 
             mainWnd.graphics.EndScene();
+            textWnd.graphics.EndScene();
         }
 
         private void DrawItem(Alturos.Yolo.Model.YoloItem item)
@@ -79,6 +88,11 @@ namespace FutureNNAimbot
             mainWnd.graphics.BeginScene();
             mainWnd.graphics.ClearScene();
             mainWnd.graphics.EndScene();
+
+            textWnd.graphics.BeginScene();
+            textWnd.graphics.ClearScene();
+            textWnd.graphics.WriteText($"Aimbot Disabled!");
+            textWnd.graphics.EndScene();
         }
 
         public void DrawTraining(System.Drawing.Rectangle trainBox, string selectedObject, bool screenshotMode)

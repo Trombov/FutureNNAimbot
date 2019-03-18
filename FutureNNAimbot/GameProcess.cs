@@ -31,7 +31,7 @@ namespace FutureNNAimbot
                 while (gp.isRunning() == false)
                 {
                     Console.Clear();
-                    Console.WriteLine($"Waiting for {gp.s.Game} to open. Press any key to retry!");
+                    Console.WriteLine($"Waiting for {gp.s.Game} to open. Press any enter to retry!");
                     Console.ReadLine();
                 }
             }

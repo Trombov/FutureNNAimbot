@@ -34,7 +34,7 @@ namespace FutureNNAimbot
         public void Start()
         {
             Console.WriteLine("running Aimbot :)");
-            var gc = new gController(s);
+            gc = new gController(s);
             bool Running = true;
 
             new Thread(() =>
@@ -57,7 +57,7 @@ namespace FutureNNAimbot
                     var items = nn.getItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, "", s, items,Firemode);
+                    dh.DrawPlaying(coordinates, s, items,Firemode);
 
                 }
                 else
@@ -71,13 +71,14 @@ namespace FutureNNAimbot
         static bool lastMDwnState = false;
         static bool Firemode = false;
         static long lastTick = DateTime.Now.Ticks;
+        private gController gc;
 
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
             shooting = 0;
 
-            var isMdwn = User32.GetAsyncKeyState(Keys.RButton) == -32767 || User32.GetAsyncKeyState(Keys.LButton) == -32767;
-            if (isMdwn || DateTime.Now.Ticks > lastTick + 20000000)
+            var isMdwn = User32.GetAsyncKeyState(Keys.RButton) != 0 || User32.GetAsyncKeyState(Keys.LButton) != 0;
+            if (isMdwn || DateTime.Now.Ticks > lastTick + (1000 * 10000)) // 10,000 ticks = 1 ms
             {               
                 Firemode = isMdwn  || lastMDwnState;
                 lastMDwnState = isMdwn;
@@ -157,10 +158,19 @@ namespace FutureNNAimbot
 
         void ReadKeys()
         {
-            if (User32.GetAsyncKeyState(Keys.F7) == -32767)
+            if (User32.GetAsyncKeyState(Keys.F2) == -32767)
             {
                 Enabled = !Enabled;
-                Console.Beep();
+                if(Enabled){
+                    gc.setHandle();
+					Console.Beep(750, 100);
+					Console.Beep(1700, 200);
+				}
+				else {
+                    gc.Dispose();
+					Console.Beep(1700, 100);
+					Console.Beep(750, 200);
+				}
             }
 
             if (User32.GetAsyncKeyState(Keys.Up) == -32767)
