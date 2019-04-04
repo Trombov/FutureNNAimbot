@@ -13,31 +13,35 @@ namespace FutureNNAimbot
     public class Settings
     {
         [DataMember]
-        public int SizeX { get; set; }
+        public int SizeX { get; set; } = 320;
         [DataMember]
-        public int SizeY { get; set; }
+        public int SizeY { get; set; } = 320;
         [DataMember]
-        public string Game { get; set; }
+        public string Game { get; set; } = "game";
         [DataMember]
-        public bool SimpleRCS { get; set; }
+        public bool SimpleRCS { get; set; } = true;
         [DataMember]
-        public Keys ShootKey { get; set; }
+        public int SimpleRCSvalue { get; set; } = 2;
         [DataMember]
-        public Keys TrainModeKey { get; set; }
+        public Keys ShootKey { get; set; } = Keys.MButton;
         [DataMember]
-        public Keys ScreenshotKey { get; set; }
+        public Keys TrainModeKey { get; set; } = Keys.Insert;
         [DataMember]
-        public Keys ScreenshotModeKey { get; set; }
+        public Keys ScreenshotKey { get; set; } = Keys.Home;
         [DataMember]
-        public float SmoothAim { get; set; }
+        public Keys ScreenshotModeKey { get; set; } = Keys.NumPad9;
         [DataMember]
-        public bool Information { get; set; }
+        public float SmoothAim { get; set; } = 0;
         [DataMember]
-        public bool Head { get; set; }
+        public bool Information { get; set; } = true;
         [DataMember]
-        public bool DrawAreaRectangle { get; set; }
+        public bool Head { get; set; } = false;
         [DataMember]
-        public bool DrawText { get; set; }
+        public bool DrawAreaRectangle { get; set; } = true;
+        [DataMember]
+        public bool DrawText { get; set; } = true;
+        [DataMember]
+        public int AutoAimDelayMs { get; set; } = 500;
 
 
         static public Settings ReadSettings()
@@ -45,20 +49,7 @@ namespace FutureNNAimbot
             // Read settings
             DataContractJsonSerializer Settings = new DataContractJsonSerializer(typeof(Settings[]));
             Settings[] settings = null;
-            Settings auto_config = new Settings()
-            {
-                SizeX = 320,
-                SizeY = 320,
-                Game = "game",
-                SimpleRCS = true,
-                ShootKey = Keys.MButton,
-                TrainModeKey = Keys.Insert,
-                ScreenshotKey = Keys.Home,
-                ScreenshotModeKey = Keys.NumPad9,
-                SmoothAim = 0.1f,
-                Information = true,
-                Head = false
-            };
+            Settings auto_config = new Settings();
             using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.OpenOrCreate))
             {
                 if (fs.Length == 0)
