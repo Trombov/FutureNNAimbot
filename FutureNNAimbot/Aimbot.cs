@@ -56,7 +56,7 @@ namespace FutureNNAimbot
                     var items = nn.getItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, s, items,Firemode);
+                    dh.DrawPlaying(coordinates, s, items, Firemode);
 
                 }
                 else
@@ -72,13 +72,15 @@ namespace FutureNNAimbot
         static long lastTick = DateTime.Now.Ticks;
         private gController gc;
 
+        private readonly Keys[] FireKeys = new[] { Keys.LButton, Keys.RButton, Keys.Space };
+
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
 
-            var isMdwn = User32.GetAsyncKeyState(Keys.RButton) != 0 || User32.GetAsyncKeyState(Keys.LButton) != 0;
+            var isMdwn = FireKeys.Any(x => User32.GetAsyncKeyState(x) != 0);
             if (isMdwn || DateTime.Now.Ticks > lastTick + (s.AutoAimDelayMs * 10000)) // 10,000 ticks = 1 ms
-            {               
-                Firemode = isMdwn  || lastMDwnState;
+            {
+                Firemode = isMdwn || lastMDwnState;
                 lastMDwnState = isMdwn;
                 lastTick = DateTime.Now.Ticks;
             }
@@ -100,7 +102,7 @@ namespace FutureNNAimbot
                 if (s.SmoothAim <= 0)
                 {
                     VirtualMouse.Move(Convert.ToInt32(((nearestEnemyHead.Left - s.SizeX / 2) + (nearestEnemyHead.Width / 2))),
-                        Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 3 )));
+                        Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 3)));
                 }
                 else//not smoothAim
                 {
@@ -109,7 +111,7 @@ namespace FutureNNAimbot
                         | s.SizeY / 2 < nearestEnemyHead.Top | s.SizeY / 2 > nearestEnemyHead.Bottom)
                     {
                         VirtualMouse.Move(Convert.ToInt32(((nearestEnemyHead.Left - s.SizeX / 2) + (nearestEnemyHead.Width / 2)) * s.SmoothAim),
-                            Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 7 ) * s.SmoothAim));
+                            Convert.ToInt32((nearestEnemyHead.Top - s.SizeY / 2 + nearestEnemyHead.Height / 7) * s.SmoothAim));
                     }
                 }
             }
@@ -118,10 +120,10 @@ namespace FutureNNAimbot
 
                 Alturos.Yolo.Model.YoloItem nearestEnemy = items.OrderBy(x => DistanceBetweenCross(x.X + Convert.ToInt32(x.Width / 6) + (x.Width / 1.5f) / 2, x.Y + x.Height / 6 + (x.Height / 3) / 2)).First();
 
-                Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6 , Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3);
+                Rectangle nearestEnemyBody = Rectangle.Create(nearestEnemy.X + Convert.ToInt32(nearestEnemy.Width / 6), nearestEnemy.Y + nearestEnemy.Height / 6, Convert.ToInt32(nearestEnemy.Width / 1.5f), nearestEnemy.Height / 3);
                 if (s.SmoothAim <= 0)
                 {
-                    VirtualMouse.Move(Convert.ToInt32(((nearestEnemyBody.Left - s.SizeX / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - s.SizeY / 2 + nearestEnemyBody.Height / 7 )));
+                    VirtualMouse.Move(Convert.ToInt32(((nearestEnemyBody.Left - s.SizeX / 2) + (nearestEnemyBody.Width / 2))), Convert.ToInt32((nearestEnemyBody.Top - s.SizeY / 2 + nearestEnemyBody.Height / 7)));
                 }
                 else
                 {
@@ -144,16 +146,18 @@ namespace FutureNNAimbot
             if (User32.GetAsyncKeyState(Keys.F2) == -32767)
             {
                 Enabled = !Enabled;
-                if(Enabled){
+                if (Enabled)
+                {
                     gc.setHandle();
-					Console.Beep(750, 100);
-					Console.Beep(1700, 200);
-				}
-				else {
+                    Console.Beep(750, 100);
+                    Console.Beep(1700, 200);
+                }
+                else
+                {
                     gc.Dispose();
-					Console.Beep(1700, 100);
-					Console.Beep(750, 200);
-				}
+                    Console.Beep(1700, 100);
+                    Console.Beep(750, 200);
+                }
             }
 
             if (User32.GetAsyncKeyState(Keys.Up) == -32767)
