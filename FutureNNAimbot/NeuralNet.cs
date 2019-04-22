@@ -28,7 +28,7 @@ namespace FutureNNAimbot
 
             if (File.Exists($"trainfiles/{Game}.cfg") && File.Exists($"trainfiles/{Game}.weights") && File.Exists($"trainfiles/{Game}.names"))
             {
-                var yoloWrapper = new Alturos.Yolo.YoloWrapper($"trainfiles/{Game}.cfg", $"trainfiles/{Game}.weights", $"trainfiles/{Game}.names");
+                var yoloWrapper = new YoloWrapper($"trainfiles/{Game}.cfg", $"trainfiles/{Game}.weights", $"trainfiles/{Game}.names");
                 Console.Clear();
                 if (yoloWrapper.EnvironmentReport.CudaExists == false)
                 {

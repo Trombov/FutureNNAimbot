@@ -3,7 +3,7 @@ Universal neural network aimbot for all games with custom training mode
 
 This is a modified version specifically for Apex Legends.
 
-Download Train data from https://github.com/vadash/a_pepe_x_legends_training_data/tree/master/img and follow the instruccions on how to use nvidia profiler.
+Download Train data from https://github.com/vadash/apex_legends_training_data and follow the instruccions on how to use nvidia profiler.
 
 Sample config:
 [{"Game":"r5apex",
