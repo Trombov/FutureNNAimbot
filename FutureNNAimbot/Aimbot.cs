@@ -72,12 +72,12 @@ namespace FutureNNAimbot
         static long lastTick = DateTime.Now.Ticks;
         private gController gc;
 
-        private readonly Keys[] FireKeys = new[] { Keys.LButton, Keys.RButton, Keys.Space };
+        //private readonly Keys[] FireKeys = new[] { Keys.LButton, Keys.RButton, Keys.Space };
 
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
 
-            var isMdwn = FireKeys.Any(x => User32.GetAsyncKeyState(x) != 0);
+            var isMdwn = s.ShootKeys.Any(x => User32.GetAsyncKeyState(x) != 0);
             if (isMdwn || DateTime.Now.Ticks > lastTick + (s.AutoAimDelayMs * 10000)) // 10,000 ticks = 1 ms
             {
                 Firemode = isMdwn || lastMDwnState;
