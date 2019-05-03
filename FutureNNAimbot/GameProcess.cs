@@ -46,9 +46,13 @@ namespace FutureNNAimbot
             return Process.GetProcessesByName(s.Game).FirstOrDefault() != null;
         }
 
+        public bool LastForeground =false;
         public bool IsForeground()
         {
-            return Process.GetProcessesByName(s.Game).FirstOrDefault()?.MainWindowHandle == User32.GetForegroundWindow();
+            var fg = Process.GetProcessesByName(s.Game).FirstOrDefault()?.MainWindowHandle == User32.GetForegroundWindow();
+            if (LastForeground != fg)
+                LastForeground = fg;
+            return fg;
         }
     }
 }

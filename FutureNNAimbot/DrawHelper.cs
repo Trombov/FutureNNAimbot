@@ -141,11 +141,12 @@ namespace FutureNNAimbot
             return Hypotenuse;
         }
 
-        public string ObjToString(object o, string delimiter = "; ")
+        public string ObjToString(object o, string delimiter = "; ", string prefix = "")
         {
             return o.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
                 .Select(x => new { x.Name, Value = x.GetValue(o), Summary = x.GetSummary() })
-                .Select(x => $"{x.Name} : {ObjValueToString(x.Value)} {(string.IsNullOrEmpty(x.Summary) ? "" : " -- " + x.Summary)}").Aggregate((a, b) => a + delimiter + b);
+                .Select(x => $"{prefix}{x.Name} : {ObjValueToString(x.Value)} {(string.IsNullOrEmpty(x.Summary) ? "" : " -- " + x.Summary)}")
+                .Aggregate((a, b) => a + delimiter + b);
         }
         private string ObjValueToString(object o, string delimiter = ", ")
         {

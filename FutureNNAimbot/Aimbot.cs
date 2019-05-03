@@ -20,6 +20,7 @@ namespace FutureNNAimbot
         private GController gc;
 
         bool Enabled = true;
+        bool isRunning = false;
 
         public Aimbot()
         {
@@ -32,11 +33,9 @@ namespace FutureNNAimbot
 
         public void Start()
         {
-            Console.WriteLine(dh.ObjToString(s, System.Environment.NewLine));
-
+            Console.WriteLine(dh.ObjToString(s, System.Environment.NewLine, "*"));
+            Console.WriteLine("-------------------------------------------");
             Console.WriteLine("running Aimbot :)");
-            bool Running = true;
-
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
@@ -47,10 +46,10 @@ namespace FutureNNAimbot
                 }
             }).Start();
 
-            while (Running)
+            while (true)
             {
 
-                if (Enabled)
+                if (Enabled && isRunning)
                 {
                     var bitmap = gc.ScreenCapture();
                     var items = nn.GetItems(bitmap);
@@ -199,8 +198,7 @@ namespace FutureNNAimbot
                 s.SimpleRCS = s.SimpleRCS == true ? false : true;
             }
 
-
-            Enabled = MainApp.gameProcess.IsForeground();
+            isRunning = MainApp.gameProcess.IsForeground();
 
 
         }
