@@ -41,7 +41,7 @@ namespace FutureNNAimbot
         /// <param name="dwData"></param>
         /// <param name="dwExtraInfo"></param>
         [DllImport("user32.dll")]
-        public static extern void Mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
+        public static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
 
         [DllImport("kernel32.dll")]
         public static extern void ExitProcess([In] uint uExitCode);

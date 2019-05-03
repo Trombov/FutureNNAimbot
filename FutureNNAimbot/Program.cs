@@ -33,7 +33,14 @@ namespace FutureNNAimbot
                 return;
             }
 
-            MainApp.Start();
+            try
+            {
+                MainApp.Start();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
 
 
         }

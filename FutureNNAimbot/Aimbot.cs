@@ -56,7 +56,7 @@ namespace FutureNNAimbot
                     var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(s, items, FireMode);
+                    dh.DrawPlaying(s, items, FireMode, PauseMode);
 
                 }
                 else
@@ -173,7 +173,7 @@ namespace FutureNNAimbot
                 }
             }
 
-            if (User32.GetAsyncKeyState(s.PauseKey) == -32767)
+            if (User32.GetAsyncKeyState(s.PauseKey) != 0)
             {
                 PauseMode = true;
                 numClicks = 0;

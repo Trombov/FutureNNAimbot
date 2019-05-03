@@ -22,7 +22,7 @@ namespace FutureNNAimbot
             textWnd.window.Y = 0;
         }
 
-        public void DrawPlaying(Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
+        public void DrawPlaying(Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode, bool PauseMode)
         {
             if (s.FollowMouse)
             {
@@ -51,7 +51,7 @@ namespace FutureNNAimbot
             //draw main text
             if (s.DrawText)
             {
-                textWnd.graphics.WriteText($"SmoothAim {Math.Round(settings.SmoothAim, 2)}; Head {settings.Head}; SimpleRCS {settings.SimpleRCS}");
+                textWnd.graphics.WriteText($"SmoothAim {Math.Round(settings.SmoothAim, 2)}; Head {settings.Head}; SimpleRCS {settings.SimpleRCS}; GrenadeMode: {PauseMode}");
             }
 
 
