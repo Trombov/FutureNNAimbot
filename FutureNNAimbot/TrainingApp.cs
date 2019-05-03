@@ -11,7 +11,7 @@ namespace FutureNNAimbot
 {
     public class TrainingApp
     {
-        private bool screenshotMode;
+        //private bool screenshotMode;
         private GameProcess gp;
         private NeuralNet nn;
         Settings settings;

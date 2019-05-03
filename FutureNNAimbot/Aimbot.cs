@@ -52,7 +52,7 @@ namespace FutureNNAimbot
                 if (Enabled)
                 {
                     coordinates = Cursor.Position;
-                    var bitmap = gc.ScreenCapture(true, coordinates);
+                    var bitmap = gc.ScreenCapture(false, coordinates);
                     var items = nn.getItems(bitmap);
                     RenderItems(items);
 
