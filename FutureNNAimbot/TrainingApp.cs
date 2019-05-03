@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public class TrainingApp
+    internal class TrainingApp
     {
         private bool screenshotMode = true;
         private readonly GameProcess gp;

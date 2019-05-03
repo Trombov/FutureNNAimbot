@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public class NeuralNet
+    internal class NeuralNet
     {
         public YoloWrapper yoloWrapper;
 

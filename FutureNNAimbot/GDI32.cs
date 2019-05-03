@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace FutureNNAimbot
 {
-    public class GDI32
+    internal class GDI32
     {
 
         public const int SRCCOPY = 0x00CC0020; // BitBlt dwRop parameter

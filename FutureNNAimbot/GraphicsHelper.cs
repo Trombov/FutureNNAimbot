@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
-    public class GraphicsEx : Graphics
+    internal class GraphicsEx : Graphics
     {
 
         public static string DefaultFontstr { get; set; } = "Arial";
@@ -53,7 +53,7 @@ namespace FutureNNAimbot
 
     }
 
-    public static class ColorHelper
+    internal  static class ColorHelper
     {
         public static SolidBrush GetSolidBrush(this Color c, Graphics graphics)
         {

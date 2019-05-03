@@ -15,11 +15,16 @@ using System.Runtime.Serialization;
 
 namespace FutureNNAimbot
 {
-
+    /// <summary>
+    /// Main App class
+    /// </summary>
     public class Program
     {
-
-        static void Main(string[] args)
+        /// <summary>
+        /// Main entry Point
+        /// </summary>
+        /// <param name="args"></param>
+       public static void Main(string[] args)
         {
             if (PriorProcess() != null)
             {
@@ -33,11 +38,14 @@ namespace FutureNNAimbot
 
         }
 
+        /// <summary>
+        /// Returns a System.Diagnostics.Process pointing to
+        /// a pre-existing process with the same name as the
+        /// current one, if any; or null if the current process
+        /// is unique.
+        /// </summary>
+        /// <returns></returns>
         public static Process PriorProcess()
-        // Returns a System.Diagnostics.Process pointing to
-        // a pre-existing process with the same name as the
-        // current one, if any; or null if the current process
-        // is unique.
         {
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
-    public class GraphicWindow
+    internal class GraphicWindow
     {
         public OverlayWindow window;
         public GraphicsEx graphics;

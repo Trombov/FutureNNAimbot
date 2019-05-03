@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public static class MainApp
+    internal static class MainApp
     {
 
         static internal Settings settings;

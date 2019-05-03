@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public class GameProcess
+    internal class GameProcess
     {
         private Settings s;
 
@@ -27,9 +27,9 @@ namespace FutureNNAimbot
             var p = Process.GetProcessesByName(settings.Game).FirstOrDefault();
             if (p == null)
             {
-                MessageBox.Show($"You have not launched {gp.s.Game}...");
+                //MessageBox.Show($"You have not launched {gp.s.Game}...");
                 //Process.GetCurrentProcess().Kill();
-                while (gp.isRunning() == false)
+                while (gp.IsRunning() == false)
                 {
                     Console.Clear();
                     Console.WriteLine($"Waiting for {gp.s.Game} to open. Press any enter to retry!");
@@ -41,7 +41,7 @@ namespace FutureNNAimbot
 
 
 
-        public bool isRunning()
+        public bool IsRunning()
         {
             return Process.GetProcessesByName(s.Game).FirstOrDefault() != null;
         }

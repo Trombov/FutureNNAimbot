@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public class Aimbot
+    internal class Aimbot
     {
         private readonly GameProcess gp;
         private NeuralNet nn;
@@ -32,6 +32,8 @@ namespace FutureNNAimbot
 
         public void Start()
         {
+            Console.WriteLine(dh.ObjToString(s, System.Environment.NewLine));
+
             Console.WriteLine("running Aimbot :)");
             bool Running = true;
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FutureNNAimbot
 {
-    public class DrawHelper
+    internal class DrawHelper
     {
         private Settings s;
         GraphicWindow mainWnd;
@@ -21,8 +21,6 @@ namespace FutureNNAimbot
             textWnd.window.X = 0;
             textWnd.window.Y = 0;
         }
-
-
 
         public void DrawPlaying(Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
         {
@@ -109,6 +107,18 @@ namespace FutureNNAimbot
 
         public void DrawTraining(System.Drawing.Rectangle trainBox, Settings settings, string selectedObject, bool screenshotMode)
         {
+            if (screenshotMode)
+            {
+                var curMousPos = System.Windows.Forms.Cursor.Position;
+                mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
+                mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
+            }
+            else
+            {
+                mainWnd.window.X = MainApp.gameController.screen_x;
+                mainWnd.window.Y = MainApp.gameController.screen_y;
+            }
+
             mainWnd.graphics.BeginScene();
             mainWnd.graphics.ClearScene();
 
@@ -129,6 +139,18 @@ namespace FutureNNAimbot
             float xdist = (X - s.SizeX / 2);
             float Hypotenuse = (float)Math.Sqrt(Math.Pow(ydist, 2) + Math.Pow(xdist, 2));
             return Hypotenuse;
+        }
+
+        public string ObjToString(object o, string delimiter = "; ")
+        {
+            return o.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+                .Select(x => new { x.Name, Value = x.GetValue(o), Summary = x.GetSummary() })
+                .Select(x => $"{x.Name} : {ObjValueToString(x.Value)} {(string.IsNullOrEmpty(x.Summary) ? "" : " -- " + x.Summary)}").Aggregate((a, b) => a + delimiter + b);
+        }
+        private string ObjValueToString(object o, string delimiter = ", ")
+        {
+            return o.GetType().IsArray ? ((Array)o).Cast<object>().Select(x => x?.ToString()).Aggregate((a, b) => a.ToString() + delimiter + b) :
+                o?.ToString();
         }
 
     }

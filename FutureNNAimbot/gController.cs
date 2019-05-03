@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public class GController : IDisposable
+    internal class GController : IDisposable
     {
         private IntPtr phnd;
         private IntPtr hdcSrc;
