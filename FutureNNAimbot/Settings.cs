@@ -95,7 +95,17 @@ namespace FutureNNAimbot
         /// Keys that will trigger aimbot snapping into target while holded down
         /// </summary>
         [DataMember]
-        public IEnumerable<Keys> ShootKeys { get; set; } = new[] { Keys.LButton, Keys.RButton, Keys.Alt };
+        public IEnumerable<Keys> ShootKeys { get; set; } = new[] { Keys.LButton, Keys.RButton };
+        /// <summary>
+        /// Key that will pause aimbot snapping and resume after Shoot key is pressed again (useful for granade throwing)
+        /// </summary>
+        [DataMember]
+        public Keys PauseKey { get; set; } = Keys.G;
+        /// <summary>
+        /// Key that will disable/enable aimbot
+        /// </summary>
+        [DataMember]
+        public Keys DisableKey { get; set; } = Keys.F2;
 
 
         static internal Settings ReadSettings()
@@ -105,42 +115,55 @@ namespace FutureNNAimbot
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Settings),
                 knowTypes, int.MaxValue, false, new EnumeratorContractSurrogate(), false);
 
-            Settings settings = null;
-            using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.OpenOrCreate))
+            var defaultSettings = new Settings();
+            if (System.IO.File.Exists("config.json") == false)
             {
-                settings = new Settings();
+                saveFile(serializer, defaultSettings );
+                MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+                return null;
+            }
+            Settings settings;
+            using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.Open))
+            {
+                settings = (Settings)serializer.ReadObject(fs);
+            }
 
-                if (fs.Length == 0)
+            var wasModified = false;
+            foreach (var p in settings.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
+            {
+                var pt = p.PropertyType;
+                var cv = p.GetValue(settings);
+                var dv = (pt.IsValueType ? Activator.CreateInstance(pt) : null);
+                if (cv?.ToString() == dv?.ToString())
                 {
-                    using (var writer = JsonReaderWriterFactory.CreateJsonWriter(
-                        fs, Encoding.UTF8, true, true, "  "))
-                    {
-                        serializer.WriteObject(writer, settings);
-                        writer.Flush();
-                    }
-                    MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
-                    System.Diagnostics.Process.GetCurrentProcess().Kill();
-                    return null;
+                    p.SetValue(settings, p.GetValue(defaultSettings));
+                    wasModified = true;
                 }
-                else
+            }
+            if (wasModified)
+            {
+                saveFile(serializer, settings);
+            }
+
+            return settings;
+        }
+
+
+        static void saveFile(DataContractJsonSerializer serializer, Settings s)
+        {
+            using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.Create))
+            {
+                using (var writer = JsonReaderWriterFactory.CreateJsonWriter(
+                    fs, Encoding.UTF8, true, true, "  "))
                 {
-                    var t = (Settings)serializer.ReadObject(fs);
-                    foreach (var p in t.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
-                    {
-                        var pt = p.PropertyType;
-                        var cv = p.GetValue(t);
-                        var dv = (pt.IsValueType ? Activator.CreateInstance(pt) : null);
-                        if (cv?.ToString() == dv?.ToString())
-                        {
-                            p.SetValue(t, p.GetValue(settings));
-                        }
-                    }
-                    settings = t;
+                    serializer.WriteObject(writer, s);
+                    writer.Flush();
                 }
-                return settings ?? new Settings();
             }
         }
     }
+
 
 
     [DataContract(Name = "Key", Namespace = "")]

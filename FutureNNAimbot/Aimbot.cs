@@ -56,7 +56,7 @@ namespace FutureNNAimbot
                     var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(s, items, Firemode);
+                    dh.DrawPlaying(s, items, FireMode);
 
                 }
                 else
@@ -68,23 +68,37 @@ namespace FutureNNAimbot
 
 
         static bool lastMDwnState = false;
-        static bool Firemode = false;
+        static bool FireMode = false;
+        static bool PauseMode = false;
         static long lastTick = DateTime.Now.Ticks;
-
-        //private readonly Keys[] FireKeys = new[] { Keys.LButton, Keys.RButton, Keys.Space };
+        static int numClicks = 0;
 
         public void RenderItems(IEnumerable<Alturos.Yolo.Model.YoloItem> items)
         {
-
             var isMdwn = s.ShootKeys.Any(x => User32.GetAsyncKeyState(x) != 0);
-            if (isMdwn || DateTime.Now.Ticks > lastTick + (s.AutoAimDelayMs * 10000)) // 10,000 ticks = 1 ms
+            var timeout = lastTick + (s.AutoAimDelayMs * 10000);// 10,000 ticks = 1 ms
+            if (isMdwn || DateTime.Now.Ticks > timeout)
             {
-                Firemode = isMdwn || lastMDwnState;
+                FireMode = isMdwn || lastMDwnState;
                 lastMDwnState = isMdwn;
                 lastTick = DateTime.Now.Ticks;
             }
 
-            if (items.Count() > 0 && Firemode)
+            if (PauseMode)
+            {
+                if (s.ShootKeys.Any(x => User32.GetAsyncKeyState(x) != 0))
+                {
+                    while (s.ShootKeys.Any(x => User32.GetAsyncKeyState(x) != 0))
+                        Thread.Sleep(100);
+                    numClicks++;
+                }
+                if (numClicks > 1)
+                    PauseMode = false;
+                else
+                    FireMode = false;
+            }
+
+            if (items.Count() > 0 && FireMode)
             {
                 Shooting(ref items);
             }
@@ -142,21 +156,27 @@ namespace FutureNNAimbot
 
         void ReadKeys()
         {
-            if (User32.GetAsyncKeyState(Keys.F2) == -32767)
+            if (User32.GetAsyncKeyState(s.DisableKey) != 0)
             {
                 Enabled = !Enabled;
                 if (Enabled)
                 {
                     gc.SetHandle();
-                    Console.Beep(750, 100);
+                    Console.Beep(750, 125);
                     Console.Beep(1700, 200);
                 }
                 else
                 {
                     gc.Dispose();
-                    Console.Beep(1700, 100);
+                    Console.Beep(1700, 125);
                     Console.Beep(750, 200);
                 }
+            }
+
+            if (User32.GetAsyncKeyState(s.PauseKey) == -32767)
+            {
+                PauseMode = true;
+                numClicks = 0;
             }
 
             if (User32.GetAsyncKeyState(Keys.Up) == -32767)
@@ -178,6 +198,10 @@ namespace FutureNNAimbot
             {
                 s.SimpleRCS = s.SimpleRCS == true ? false : true;
             }
+
+
+            Enabled = MainApp.gameProcess.IsForeground();
+
 
         }
 

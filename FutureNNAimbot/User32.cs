@@ -46,7 +46,8 @@ namespace FutureNNAimbot
         [DllImport("kernel32.dll")]
         public static extern void ExitProcess([In] uint uExitCode);
 
-
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
 
     }
 

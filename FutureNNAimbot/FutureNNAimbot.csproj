@@ -43,9 +43,7 @@
   <PropertyGroup>
     <ApplicationIcon>Iconsmind-Outline-Robot.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Alturos.Yolo, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Alturos.Yolo.2.4.2\lib\net461\Alturos.Yolo.dll</HintPath>
