@@ -7,26 +7,30 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-   public  class MainApp
+    public static class MainApp
     {
 
-        private Settings settings;
-        private GameProcess gp;
+        static internal Settings settings;
+        static internal NeuralNet nNet;
+        static internal GameProcess gp;
+        static internal DrawHelper dh;
+        static internal gController gc;
 
-        public void Start()
+        public static void Start()
         {
             settings = Settings.ReadSettings();
-            var nNet = NeuralNet.Create(settings.Game);
+            nNet = NeuralNet.Create();
+            gp = GameProcess.Create();
+            dh = new DrawHelper();
+            gc = new gController();
 
-            gp = GameProcess.Create(settings);
-
-
-            if (nNet == null) {
-                var ta = new TrainingApp(gp,nNet);
+            if (nNet == null)
+            {
+                var ta = new TrainingApp();
                 ta.startTrainingMode();
             }
-            
-            var ab = new Aimbot(settings, gp, nNet);
+
+            var ab = new Aimbot();
             ab.Start();
         }
 

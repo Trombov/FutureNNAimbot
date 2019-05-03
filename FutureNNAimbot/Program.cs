@@ -28,7 +28,7 @@ namespace FutureNNAimbot
                 return;
             }
 
-            new MainApp().Start();
+            MainApp.Start();
 
 
         }

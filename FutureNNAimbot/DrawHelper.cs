@@ -13,23 +13,34 @@ namespace FutureNNAimbot
         GraphicWindow mainWnd;
         GraphicWindow textWnd;
 
-        public DrawHelper(Settings settings)
+        public DrawHelper()
         {
-            s = settings;
-            mainWnd = new GraphicWindow(settings.SizeX, settings.SizeY);
-            textWnd = new GraphicWindow(settings.SizeX, settings.SizeY);
+            s = MainApp.settings;
+            mainWnd = new GraphicWindow(s.SizeX, s.SizeY);
+            textWnd = new GraphicWindow(s.SizeX, s.SizeY);
+            textWnd.window.X = 0;
+            textWnd.window.Y = 0;
         }
 
 
 
-        public void DrawPlaying(System.Drawing.Point curMousPos,  Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
+        public void DrawPlaying(Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
         {
-            mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
-            mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
-            textWnd.window.X = 0;
-            textWnd.window.Y = 0;
+            if (s.CursorToCenter)
+            {
+                var curMousPos = System.Windows.Forms.Cursor.Position;
+                mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
+                mainWnd.window.Y = (int)curMousPos.Y - s.SizeY / 2;
+            }
+            else
+            {
+                mainWnd.window.X = MainApp.gc.screen_x;
+                mainWnd.window.Y = MainApp.gc.screen_y;
+            }
+
             mainWnd.graphics.BeginScene();
             mainWnd.graphics.ClearScene();
+
             textWnd.graphics.BeginScene();
             textWnd.graphics.ClearScene();
 
@@ -40,10 +51,11 @@ namespace FutureNNAimbot
                 Rectangle.Create(s.SizeX / 2, s.SizeY / 2, 4, 4));
 
             //draw main text
-            if (s.DrawText) {
+            if (s.DrawText)
+            {
                 textWnd.graphics.WriteText($"SmoothAim {Math.Round(settings.SmoothAim, 2)}; Head {settings.Head}; SimpleRCS {settings.SimpleRCS}");
             }
-                
+
 
             foreach (var item in items)
             {
@@ -95,9 +107,16 @@ namespace FutureNNAimbot
             textWnd.graphics.EndScene();
         }
 
-        public void DrawTraining(System.Drawing.Rectangle trainBox, string selectedObject, bool screenshotMode)
+        public void DrawTraining(System.Drawing.Rectangle trainBox, Settings settings, string selectedObject, bool screenshotMode)
         {
-            mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered"));
+            mainWnd.graphics.BeginScene();
+            mainWnd.graphics.ClearScene();
+
+            if (s.DrawAreaRectangle)
+                mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
+
+            mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine
+                + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered") + Environment.NewLine + $"CursorToCenter: {settings.CursorToCenter}");
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
@@ -111,5 +130,6 @@ namespace FutureNNAimbot
             float Hypotenuse = (float)Math.Sqrt(Math.Pow(ydist, 2) + Math.Pow(xdist, 2));
             return Hypotenuse;
         }
+
     }
 }

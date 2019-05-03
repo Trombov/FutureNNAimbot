@@ -35,7 +35,11 @@ namespace FutureNNAimbot
         [DataMember]
         public bool DrawAreaRectangle { get; set; } = false;
         [DataMember]
+        public bool CursorToCenter { get; set; } = true;
+        [DataMember]
         public bool DrawText { get; set; } = true;
+        [DataMember]
+        public byte DrawOpacity { get; set; } = 120;
         [DataMember]
         public int AutoAimDelayMs { get; set; } = 250;
         [DataMember]

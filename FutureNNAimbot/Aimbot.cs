@@ -17,23 +17,22 @@ namespace FutureNNAimbot
         private NeuralNet nn;
         private Settings s;
         private DrawHelper dh;
-        private System.Drawing.Point coordinates;
+        private gController gc;
 
         bool Enabled = true;
 
-        public Aimbot(Settings settings, GameProcess gameProcess, NeuralNet neuralNet)
+        public Aimbot()
         {
-            gp = gameProcess;
-            nn = neuralNet;
-            s = settings;
-            dh = new DrawHelper(settings);
-
+            gp = MainApp.gp;
+            nn = MainApp.nNet;
+            s = MainApp.settings;
+            dh = MainApp.dh;
+            gc = MainApp.gc;
         }
 
         public void Start()
         {
             Console.WriteLine("running Aimbot :)");
-            gc = new gController(s);
             bool Running = true;
 
             new Thread(() =>
@@ -51,12 +50,11 @@ namespace FutureNNAimbot
 
                 if (Enabled)
                 {
-                    coordinates = Cursor.Position;
-                    var bitmap = gc.ScreenCapture(false, coordinates);
-                    var items = nn.getItems(bitmap);
+                    var bitmap = gc.ScreenCapture(false);
+                    var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
-                    dh.DrawPlaying(coordinates, s, items, Firemode);
+                    dh.DrawPlaying(s, items, Firemode);
 
                 }
                 else
@@ -70,7 +68,6 @@ namespace FutureNNAimbot
         static bool lastMDwnState = false;
         static bool Firemode = false;
         static long lastTick = DateTime.Now.Ticks;
-        private gController gc;
 
         //private readonly Keys[] FireKeys = new[] { Keys.LButton, Keys.RButton, Keys.Space };
 

@@ -9,10 +9,6 @@ namespace FutureNNAimbot
 {
     public class GraphicsEx : Graphics
     {
-        public static GameOverlay.Drawing.Color AreaColor { get; set; } = new GameOverlay.Drawing.Color(0, 255, 0, 10);
-        public static GameOverlay.Drawing.Color TextColor { get; set; } = new GameOverlay.Drawing.Color(120, 255, 255, 255);
-        public static GameOverlay.Drawing.Color BodyColor { get; set; } = new GameOverlay.Drawing.Color(0, 255, 0, 80);
-        public static GameOverlay.Drawing.Color HeadColor { get; set; } = new GameOverlay.Drawing.Color(255, 0, 0, 80);
 
         public static string DefaultFontstr { get; set; } = "Arial";
         public static int DefaultFontSize { get; set; } = 10;
@@ -20,25 +16,31 @@ namespace FutureNNAimbot
         public static readonly Point StartPoint = new Point(0, 0);
 
         Font DefaultFont;
-        public SolidBrush acb;
-        public SolidBrush tfb;
-        public SolidBrush csb;
-        public SolidBrush csfmb;
-        public SolidBrush hcb;
-        public SolidBrush bcb;
+        public SolidBrush acb; //Area Color
+        public SolidBrush tfb; //Text Color
+        public SolidBrush csb; //Blue brush
+        public SolidBrush csfmb; //Red brush
+        public SolidBrush hcb; //Head Color
+        public SolidBrush bcb; //Body Color
 
-        
-        new public void  Setup()
+
+        new public void Setup()
         {
+            int Transparency = MainApp.settings.DrawOpacity;
             base.Setup();
 
+            Color AreaColor = new Color(0, 255, 0, Transparency);
+            Color TextColor = new Color(120, 255, 255, Transparency);
+            Color BodyColor = new Color(0, 255, 0, Transparency);
+            Color HeadColor = new Color(255, 0, 0, Transparency);
+
             DefaultFont = CreateFont(DefaultFontstr, DefaultFontSize);
-            acb = AreaColor.getSolidBrush(this);
-            tfb = TextColor.getSolidBrush(this);
+            acb = AreaColor.GetSolidBrush(this);
+            tfb = TextColor.GetSolidBrush(this);
             csb = CreateSolidBrush(Color.Blue);
             csfmb = CreateSolidBrush(Color.Red);
-            hcb = HeadColor.getSolidBrush(this);
-            bcb = BodyColor.getSolidBrush(this);
+            hcb = HeadColor.GetSolidBrush(this);
+            bcb = BodyColor.GetSolidBrush(this);
         }
 
         public void WriteText(string text, Font f = null)
@@ -53,12 +55,10 @@ namespace FutureNNAimbot
 
     public static class ColorHelper
     {
-        public static SolidBrush getSolidBrush(this Color c, Graphics graphics)
+        public static SolidBrush GetSolidBrush(this Color c, Graphics graphics)
         {
             return graphics.CreateSolidBrush(c);
         }
-
-
     }
 
 }

@@ -23,13 +23,16 @@ namespace FutureNNAimbot
         private int screen_width;
         private int screen_height;
 
+        public int screen_x;
+        public int screen_y;
+
         string game;
 
-        public gController(Settings s)
+        public gController()
         {
-            width = s.SizeX;
-            height = s.SizeY;
-            game = s.Game;
+            width = MainApp.settings.SizeX;
+            height = MainApp.settings.SizeY;
+            game = MainApp.settings.Game;
             setHandle();
         }
 
@@ -53,21 +56,26 @@ namespace FutureNNAimbot
             User32.GetWindowRect(phnd, ref windowRect);
             screen_width = windowRect.right - windowRect.left;
             screen_height = windowRect.bottom - windowRect.top;
+            screen_x = screen_width / 2 - width / 2;
+            screen_y = screen_height / 2 - height / 2;
             hdcDest = GDI32.CreateCompatibleDC(hdcSrc);
             hBitmap = GDI32.CreateCompatibleBitmap(hdcSrc, width, height);
             hOld = GDI32.SelectObject(hdcDest, hBitmap);
         }
 
         //added fix by caching capture object references
-        public System.Drawing.Image ScreenCapture(bool followMouse, System.Drawing.Point coordinates)
+        public System.Drawing.Image ScreenCapture(bool followMouse)
         {
             var size = new System.Drawing.Point(width, height);
 
 
             if (followMouse)
+            {
+                System.Drawing.Point coordinates = Cursor.Position;
                 GDI32.BitBlt(hdcDest, 0, 0, width, height, hdcSrc, coordinates.X - width / 2, coordinates.Y - height / 2, GDI32.SRCCOPY);
+            }
             else
-                GDI32.BitBlt(hdcDest, 0, 0, width, height, hdcSrc, screen_width / 2 - width / 2, screen_height / 2 - height / 2, GDI32.SRCCOPY);
+                GDI32.BitBlt(hdcDest, 0, 0, width, height, hdcSrc, screen_x, screen_y, GDI32.SRCCOPY);
 
             try
             {
@@ -111,9 +119,9 @@ namespace FutureNNAimbot
             return img;
         }
 
-        public void saveCapture(bool screenshotmode, string path)
+        public void saveCapture(bool followMouse, string path)
         {
-            ScreenCapture(screenshotmode, System.Windows.Forms.Cursor.Position).Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            ScreenCapture(followMouse).Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         public void Dispose()

@@ -8,9 +8,9 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-   public class GameProcess
+    public class GameProcess
     {
-       public Settings s;
+        private Settings s;
 
         public string ProcessName { get { return s.Game; } }
 
@@ -20,8 +20,9 @@ namespace FutureNNAimbot
 
         }
 
-        public static  GameProcess Create(Settings settings)
+        public static GameProcess Create()
         {
+            Settings settings = MainApp.settings;
             var gp = new GameProcess(settings);
             var p = Process.GetProcessesByName(settings.Game).FirstOrDefault();
             if (p == null)
@@ -38,7 +39,7 @@ namespace FutureNNAimbot
             return gp;
         }
 
-        
+
 
         public bool isRunning()
         {
