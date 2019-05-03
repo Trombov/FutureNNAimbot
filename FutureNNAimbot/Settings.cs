@@ -35,7 +35,7 @@ namespace FutureNNAimbot
         [DataMember]
         public bool DrawAreaRectangle { get; set; } = false;
         [DataMember]
-        public bool CursorToCenter { get; set; } = true;
+        public bool FollowMouse { get; set; } = false;
         [DataMember]
         public bool DrawText { get; set; } = true;
         [DataMember]
@@ -56,16 +56,16 @@ namespace FutureNNAimbot
             Settings settings = null;
             using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.OpenOrCreate))
             {
+                settings = new Settings();
+
                 if (fs.Length == 0)
                 {
-                    settings = new Settings();
                     using (var writer = JsonReaderWriterFactory.CreateJsonWriter(
                         fs, Encoding.UTF8, true, true, "  "))
                     {
                         serializer.WriteObject(writer, settings);
                         writer.Flush();
                     }
-                    //serializer.WriteObject(fs, settings);
                     MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                     return null;
@@ -75,8 +75,13 @@ namespace FutureNNAimbot
                     var t = (Settings)serializer.ReadObject(fs);
                     foreach (var p in t.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
                     {
-                        if (p.GetValue(t) == null)
+                        var pt = p.PropertyType;
+                        var cv = p.GetValue(t);
+                        var dv = (pt.IsValueType ? Activator.CreateInstance(pt) : null);
+                        if (cv?.ToString() == dv?.ToString())
+                        {
                             p.SetValue(t, p.GetValue(settings));
+                        }
                     }
                     settings = t;
                 }

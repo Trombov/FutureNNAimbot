@@ -13,21 +13,21 @@ namespace FutureNNAimbot
 {
     public class Aimbot
     {
-        private GameProcess gp;
+        private readonly GameProcess gp;
         private NeuralNet nn;
         private Settings s;
         private DrawHelper dh;
-        private gController gc;
+        private GController gc;
 
         bool Enabled = true;
 
         public Aimbot()
         {
-            gp = MainApp.gp;
+            gp = MainApp.gameProcess;
             nn = MainApp.nNet;
             s = MainApp.settings;
-            dh = MainApp.dh;
-            gc = MainApp.gc;
+            dh = MainApp.drawHelper;
+            gc = MainApp.gameController;
         }
 
         public void Start()
@@ -50,7 +50,7 @@ namespace FutureNNAimbot
 
                 if (Enabled)
                 {
-                    var bitmap = gc.ScreenCapture(false);
+                    var bitmap = gc.ScreenCapture();
                     var items = nn.GetItems(bitmap);
                     RenderItems(items);
 
@@ -145,7 +145,7 @@ namespace FutureNNAimbot
                 Enabled = !Enabled;
                 if (Enabled)
                 {
-                    gc.setHandle();
+                    gc.SetHandle();
                     Console.Beep(750, 100);
                     Console.Beep(1700, 200);
                 }

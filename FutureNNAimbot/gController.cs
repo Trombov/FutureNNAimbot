@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace FutureNNAimbot
 {
-    public class gController : IDisposable
+    public class GController : IDisposable
     {
         private IntPtr phnd;
         private IntPtr hdcSrc;
@@ -17,26 +17,25 @@ namespace FutureNNAimbot
         private IntPtr hBitmap;
         private IntPtr hOld;
 
-        private int width;
-        private int height;
+        private readonly int width;
+        private readonly int height;
 
         private int screen_width;
         private int screen_height;
 
         public int screen_x;
         public int screen_y;
+        readonly string game;
 
-        string game;
-
-        public gController()
+        public GController()
         {
             width = MainApp.settings.SizeX;
             height = MainApp.settings.SizeY;
             game = MainApp.settings.Game;
-            setHandle();
+            SetHandle();
         }
 
-        public void setHandle()
+        public void SetHandle()
         {
             var p = Process.GetProcessesByName(game).FirstOrDefault();
             phnd = p?.MainWindowHandle ?? IntPtr.Zero;
@@ -64,12 +63,12 @@ namespace FutureNNAimbot
         }
 
         //added fix by caching capture object references
-        public System.Drawing.Image ScreenCapture(bool followMouse)
+        public System.Drawing.Image ScreenCapture()
         {
             var size = new System.Drawing.Point(width, height);
 
 
-            if (followMouse)
+            if (MainApp.settings.FollowMouse)
             {
                 System.Drawing.Point coordinates = Cursor.Position;
                 GDI32.BitBlt(hdcDest, 0, 0, width, height, hdcSrc, coordinates.X - width / 2, coordinates.Y - height / 2, GDI32.SRCCOPY);
@@ -83,7 +82,7 @@ namespace FutureNNAimbot
             }
             catch (Exception)
             {
-                setHandle();
+                SetHandle();
                 return System.Drawing.Image.FromHbitmap(hBitmap);
             }
         }
@@ -119,9 +118,9 @@ namespace FutureNNAimbot
             return img;
         }
 
-        public void saveCapture(bool followMouse, string path)
+        public void SaveCapture(string path)
         {
-            ScreenCapture(followMouse).Save(path, System.Drawing.Imaging.ImageFormat.Png);
+            ScreenCapture().Save(path, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         public void Dispose()

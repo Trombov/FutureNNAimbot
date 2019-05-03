@@ -12,22 +12,22 @@ namespace FutureNNAimbot
 
         static internal Settings settings;
         static internal NeuralNet nNet;
-        static internal GameProcess gp;
-        static internal DrawHelper dh;
-        static internal gController gc;
+        static internal GameProcess gameProcess;
+        static internal DrawHelper drawHelper;
+        static internal GController gameController;
 
         public static void Start()
         {
             settings = Settings.ReadSettings();
             nNet = NeuralNet.Create();
-            gp = GameProcess.Create();
-            dh = new DrawHelper();
-            gc = new gController();
+            gameProcess = GameProcess.Create();
+            drawHelper = new DrawHelper();
+            gameController = new GController();
 
             if (nNet == null)
             {
                 var ta = new TrainingApp();
-                ta.startTrainingMode();
+                ta.StartTrainingMode();
             }
 
             var ab = new Aimbot();

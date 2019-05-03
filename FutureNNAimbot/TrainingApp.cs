@@ -10,8 +10,8 @@ namespace FutureNNAimbot
     public class TrainingApp
     {
         private bool screenshotMode = true;
-        private GameProcess gp;
-        private gController gc;
+        private readonly GameProcess gp;
+        private GController gc;
         private NeuralNet nn;
         private DrawHelper dh;
         Settings settings;
@@ -23,11 +23,11 @@ namespace FutureNNAimbot
 
         public TrainingApp()
         {
-            this.gp = MainApp.gp;
+            this.gp = MainApp.gameProcess;
             this.nn = MainApp.nNet;
-            this.gc = MainApp.gc;
+            this.gc = MainApp.gameController;
             this.settings = MainApp.settings;
-            this.dh = MainApp.dh;
+            this.dh = MainApp.drawHelper;
             trainBox = new Rectangle(0, 0, settings.SizeX / 2, settings.SizeY / 2);
 
             trainBox.X = settings.SizeX / 2 - trainBox.Width / 2;
@@ -35,7 +35,7 @@ namespace FutureNNAimbot
             TrainingNames = File.ReadAllLines($"trainfiles/{settings.Game}.names");
         }
 
-        public void startTrainingMode()
+        public void StartTrainingMode()
         {
             var Game = gp;
             File.Copy("defaultfiles/default_trainmore.cmd", $"darknet/{Game}_trainmore.cmd", true);
@@ -130,7 +130,7 @@ namespace FutureNNAimbot
                 float relative_width = (float)trainBox.Width / settings.SizeX;
                 float relative_height = (float)trainBox.Height / settings.SizeY;
 
-                gc.saveCapture(true, $"darknet/data/img/{settings.Game}{rand}.png");
+                gc.SaveCapture($"darknet/data/img/{settings.Game}{rand}.png");
                 File.WriteAllText($"darknet/data/img/{settings.Game}{rand}.txt", string.Format("{0} {1} {2} {3} {4}",
                     selectedObject, relative_center_x, relative_center_y, relative_width, relative_height).Replace(",", "."));
 
@@ -139,7 +139,7 @@ namespace FutureNNAimbot
 
             if (Util.IsKeyToggled(Keys.Back))
             {
-                gc.saveCapture(true, $"darknet/data/img/{settings.Game}{rand}.png");
+                gc.SaveCapture($"darknet/data/img/{settings.Game}{rand}.png");
                 File.WriteAllText($"darknet/data/img/{settings.Game}{rand}.txt", "");
 
                 //Console.Beep();

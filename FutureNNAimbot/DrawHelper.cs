@@ -26,7 +26,7 @@ namespace FutureNNAimbot
 
         public void DrawPlaying(Settings settings, IEnumerable<Alturos.Yolo.Model.YoloItem> items, bool firemode)
         {
-            if (s.CursorToCenter)
+            if (s.FollowMouse)
             {
                 var curMousPos = System.Windows.Forms.Cursor.Position;
                 mainWnd.window.X = (int)curMousPos.X - s.SizeX / 2;
@@ -34,8 +34,8 @@ namespace FutureNNAimbot
             }
             else
             {
-                mainWnd.window.X = MainApp.gc.screen_x;
-                mainWnd.window.Y = MainApp.gc.screen_y;
+                mainWnd.window.X = MainApp.gameController.screen_x;
+                mainWnd.window.Y = MainApp.gameController.screen_y;
             }
 
             mainWnd.graphics.BeginScene();
@@ -116,7 +116,7 @@ namespace FutureNNAimbot
                 mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, 0, 0, s.SizeX, s.SizeY, 2);
 
             mainWnd.graphics.WriteText("Training mode. Object: " + selectedObject + Environment.NewLine
-                + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered") + Environment.NewLine + $"CursorToCenter: {settings.CursorToCenter}");
+                + "ScreenshotMode: " + (screenshotMode == true ? "following" : "centered") + Environment.NewLine + $"FollowMouse: {settings.FollowMouse}");
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X, trainBox.Y, trainBox.Width, trainBox.Height), 1);
             mainWnd.graphics.DrawRectangle(mainWnd.graphics.csb, Rectangle.Create(trainBox.X + Convert.ToInt32(trainBox.Width / 2.9), trainBox.Y, Convert.ToInt32(trainBox.Width / 3), trainBox.Height / 7), 2);
 
