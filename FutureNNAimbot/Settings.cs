@@ -118,7 +118,7 @@ namespace FutureNNAimbot
             var defaultSettings = new Settings();
             if (System.IO.File.Exists("config.json") == false)
             {
-                saveFile(serializer, defaultSettings );
+                saveFile(serializer, defaultSettings);
                 MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
                 return null;
@@ -130,12 +130,10 @@ namespace FutureNNAimbot
             }
 
             var wasModified = false;
+            var txtsettings = System.IO.File.ReadAllText("config.json");
             foreach (var p in settings.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
             {
-                var pt = p.PropertyType;
-                var cv = p.GetValue(settings);
-                var dv = (pt.IsValueType ? Activator.CreateInstance(pt) : null);
-                if (cv?.ToString() == dv?.ToString())
+                if (!txtsettings.Contains(p.Name))
                 {
                     p.SetValue(settings, p.GetValue(defaultSettings));
                     wasModified = true;

@@ -5,9 +5,10 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{63BDD8BB-BE91-45CD-A998-34A8912A69E6}</ProjectGuid>
+	<MyNewGuid>$([System.Guid]::NewGuid())</MyNewGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>FutureNNAimbot</RootNamespace>
-    <AssemblyName>0123</AssemblyName>
+    <AssemblyName>$(MyNewGuid)</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -25,7 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\0123.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\$(MyNewGuid).xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
