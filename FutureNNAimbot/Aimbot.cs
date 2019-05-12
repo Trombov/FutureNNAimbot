@@ -61,6 +61,7 @@ namespace FutureNNAimbot
                 else
                 {
                     dh.DrawDisabled();
+                    Thread.Sleep(500);
                 }
             }
         }
@@ -200,7 +201,7 @@ namespace FutureNNAimbot
 
             isRunning = MainApp.gameProcess.IsForeground();
 
-
+            Thread.Sleep(100);
         }
 
         public float DistanceBetweenCross(float X, float Y)
