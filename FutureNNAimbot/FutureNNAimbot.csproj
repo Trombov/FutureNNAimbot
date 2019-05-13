@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{63BDD8BB-BE91-45CD-A998-34A8912A69E6}</ProjectGuid>
-	<MyNewGuid>$([System.Guid]::NewGuid())</MyNewGuid>
+    <MyNewGuid>$([System.Guid]::NewGuid())</MyNewGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>FutureNNAimbot</RootNamespace>
     <AssemblyName>$(MyNewGuid)</AssemblyName>
@@ -92,9 +92,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <None Include="config.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

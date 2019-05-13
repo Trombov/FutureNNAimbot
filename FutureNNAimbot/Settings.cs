@@ -107,50 +107,52 @@ namespace FutureNNAimbot
         [DataMember]
         public Keys DisableKey { get; set; } = Keys.F2;
 
-
+        readonly static string filename = "config.json";
         static internal Settings ReadSettings()
         {
+            
             // Read settings
             var knowTypes = new List<Type> { typeof(EnumSurrogate) };
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Settings),
                 knowTypes, int.MaxValue, false, new EnumeratorContractSurrogate(), false);
 
             var defaultSettings = new Settings();
-            if (System.IO.File.Exists("config.json") == false)
+            if (System.IO.File.Exists(filename) == false)
             {
-                saveFile(serializer, defaultSettings);
+                SaveFile(serializer, defaultSettings);
                 MessageBox.Show($"Created auto-config, change whatever settings you want and restart.");
                 System.Diagnostics.Process.GetCurrentProcess().Kill();
                 return null;
             }
             Settings settings;
-            using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.Open))
+            using (var fs = new System.IO.FileStream(filename, System.IO.FileMode.Open))
             {
                 settings = (Settings)serializer.ReadObject(fs);
             }
 
             var wasModified = false;
-            var txtsettings = System.IO.File.ReadAllText("config.json");
+            var txtsettings = System.IO.File.ReadAllText(filename);
             foreach (var p in settings.GetType().GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance))
             {
                 if (!txtsettings.Contains(p.Name))
                 {
+                    Console.WriteLine($"Warning missing config line {p.Name}");
                     p.SetValue(settings, p.GetValue(defaultSettings));
                     wasModified = true;
                 }
             }
             if (wasModified)
             {
-                saveFile(serializer, settings);
+                //saveFile(serializer, settings);
             }
 
             return settings;
         }
 
 
-        static void saveFile(DataContractJsonSerializer serializer, Settings s)
+        static void SaveFile(DataContractJsonSerializer serializer, Settings s)
         {
-            using (var fs = new System.IO.FileStream("config.json", System.IO.FileMode.Create))
+            using (var fs = new System.IO.FileStream(filename, System.IO.FileMode.Create))
             {
                 using (var writer = JsonReaderWriterFactory.CreateJsonWriter(
                     fs, Encoding.UTF8, true, true, "  "))
